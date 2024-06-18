@@ -1,46 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice } from "@reduxjs/toolkit";
 
-// Base URL for category-related API requests
-const BASE_URL = "http://localhost:8000/categories";
-
-// Async thunk for fetching all categories
-export const fetchAllCategories = createAsyncThunk(
-  "categories/fetchAll",
-  async () => {
-    const response = await axios.get(`${BASE_URL}/`);
-    return response.data;
-  }
-);
-
-// Async thunk for adding a new category
-export const addCategory = createAsyncThunk(
-  "categories/add",
-  async (categoryData) => {
-    const response = await axios.post(`${BASE_URL}/`, categoryData);
-    return response.data;
-  }
-);
-
-// Async thunk for updating an existing category
-export const updateCategory = createAsyncThunk(
-  "categories/update",
-  async ({ id, updateData }) => {
-    const response = await axios.put(`${BASE_URL}/${id}`, updateData);
-    return response.data;
-  }
-);
-
-// Async thunk for deleting a category
-export const deleteCategory = createAsyncThunk(
-  "categories/delete",
-  async (id) => {
-    await axios.delete(`${BASE_URL}/${id}`);
-    return id;
-  }
-);
-
-// Initial state of the categories slice
 const initialState = {
   categories: [],
   status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
@@ -51,37 +10,74 @@ const initialState = {
 const categorySlice = createSlice({
   name: "categories",
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchAllCategories.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchAllCategories.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.categories = action.payload;
-      })
-      .addCase(fetchAllCategories.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      })
-      .addCase(addCategory.fulfilled, (state, action) => {
-        state.categories.push(action.payload);
-      })
-      .addCase(updateCategory.fulfilled, (state, action) => {
-        const index = state.categories.findIndex(
-          (c) => c._id === action.payload._id
-        );
-        if (index !== -1) {
-          state.categories[index] = action.payload;
-        }
-      })
-      .addCase(deleteCategory.fulfilled, (state, action) => {
-        state.categories = state.categories.filter(
-          (c) => c._id !== action.payload
-        );
-      });
+  reducers: {
+    fetchAllCategories(state) {
+      state.status = "loading";
+    },
+    fetchAllCategoriesSuccess(state, action) {
+      state.status = "succeeded";
+      state.categories = action.payload;
+    },
+    fetchAllCategoriesFailure(state, action) {
+      state.status = "failed";
+      state.error = action.payload;
+    },
+    addCategory(state) {
+      state.status = "loading";
+    },
+    addCategorySuccess(state, action) {
+      state.status = "succeeded";
+      state.categories.push(action.payload);
+    },
+    addCategoryFailure(state, action) {
+      state.status = "failed";
+      state.error = action.payload;
+    },
+    updateCategory(state) {
+      state.status = "loading";
+    },
+    updateCategorySuccess(state, action) {
+      state.status = "succeeded";
+      const index = state.categories.findIndex(
+        (c) => c._id === action.payload._id
+      );
+      if (index !== -1) {
+        state.categories[index] = action.payload;
+      }
+    },
+    updateCategoryFailure(state, action) {
+      state.status = "failed";
+      state.error = action.payload;
+    },
+    deleteCategory(state) {
+      state.status = "loading";
+    },
+    deleteCategorySuccess(state, action) {
+      state.status = "succeeded";
+      state.categories = state.categories.filter(
+        (c) => c._id !== action.payload
+      );
+    },
+    deleteCategoryFailure(state, action) {
+      state.status = "failed";
+      state.error = action.payload;
+    },
   },
 });
+
+export const {
+  fetchAllCategories,
+  fetchAllCategoriesSuccess,
+  fetchAllCategoriesFailure,
+  addCategory,
+  addCategorySuccess,
+  addCategoryFailure,
+  updateCategory,
+  updateCategorySuccess,
+  updateCategoryFailure,
+  deleteCategory,
+  deleteCategorySuccess,
+  deleteCategoryFailure,
+} = categorySlice.actions;
 
 export default categorySlice.reducer;

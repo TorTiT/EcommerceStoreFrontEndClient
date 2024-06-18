@@ -6,12 +6,12 @@ import {
   updateCategory,
   deleteCategory,
 } from "../redux/slices/categorySlice";
-import "../css/categories.css";
+import Navbar from "../Components/Navbar";
 
 const CategoriesPage = () => {
   const dispatch = useDispatch();
   const { categories, status, error } = useSelector(
-    (state) => state.categories
+    (state) => state.categories,
   );
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newCategoryDescription, setNewCategoryDescription] = useState("");
@@ -29,7 +29,7 @@ const CategoriesPage = () => {
         addCategory({
           name: newCategoryName,
           description: newCategoryDescription,
-        })
+        }),
       );
       setNewCategoryName("");
       setNewCategoryDescription("");
@@ -66,11 +66,14 @@ const CategoriesPage = () => {
 
   const renderCategories = () => {
     return categories.map((category) => (
-      <div key={category._id} className="category-item">
+      <div
+        key={category._id}
+        className="category-item mb-4 rounded bg-white p-4 shadow-md"
+      >
         {editStatus[category._id] ? (
           <>
             <input
-              className="category-input"
+              className="category-input mb-2 w-full rounded border border-gray-300 p-2"
               type="text"
               value={editStatus[category._id].name}
               onChange={(e) =>
@@ -78,7 +81,7 @@ const CategoriesPage = () => {
               }
             />
             <textarea
-              className="category-textarea"
+              className="category-textarea mb-2 w-full rounded border border-gray-300 p-2"
               value={editStatus[category._id].description}
               onChange={(e) =>
                 handleChange(category._id, { description: e.target.value })
@@ -87,50 +90,59 @@ const CategoriesPage = () => {
           </>
         ) : (
           <>
-            <span>{category.name}</span>
-            <p>{category.description}</p>
+            <span className="text-lg font-bold">{category.name}</span>
+            <p className="text-gray-600">{category.description}</p>
           </>
         )}
-        <button
-          className="edit-button"
-          onClick={() => toggleEdit(category._id)}
-        >
-          {editStatus[category._id] ? "Save" : "Edit"}
-        </button>
-        <button
-          className="delete-button"
-          onClick={() => handleDeleteCategory(category._id)}
-        >
-          Delete
-        </button>
+        <div className="flex space-x-2">
+          <button
+            className="edit-button rounded bg-blue-500 px-4 py-2 text-white"
+            onClick={() => toggleEdit(category._id)}
+          >
+            {editStatus[category._id] ? "Save" : "Edit"}
+          </button>
+          <button
+            className="delete-button rounded bg-red-500 px-4 py-2 text-white"
+            onClick={() => handleDeleteCategory(category._id)}
+          >
+            Delete
+          </button>
+        </div>
       </div>
     ));
   };
 
   return (
-    <div className="container">
-      <h1 className="header">Category Management</h1>
-      {status === "loading" && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
-      <div className="category-form">
-        <input
-          className="category-input"
-          type="text"
-          value={newCategoryName}
-          onChange={(e) => setNewCategoryName(e.target.value)}
-          placeholder="New category name"
-        />
-        <textarea
-          className="category-textarea"
-          value={newCategoryDescription}
-          onChange={(e) => setNewCategoryDescription(e.target.value)}
-          placeholder="Category description"
-        />
-        <button className="add-button" onClick={handleAddCategory}>
-          Add Category
-        </button>
+    <div className="min-h-screen bg-gray-100 text-gray-900">
+      <div className="container mx-auto p-4">
+        <h1 className="mb-6 text-3xl font-bold text-blue-600">
+          Category Management
+        </h1>
+        {status === "loading" && <p className="text-yellow-600">Loading...</p>}
+        {error && <p className="text-red-600">Error: {error}</p>}
+        <div className="category-form mb-6">
+          <input
+            className="category-input mb-2 w-full rounded border border-gray-300 p-2"
+            type="text"
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            placeholder="New category name"
+          />
+          <textarea
+            className="category-textarea mb-2 w-full rounded border border-gray-300 p-2"
+            value={newCategoryDescription}
+            onChange={(e) => setNewCategoryDescription(e.target.value)}
+            placeholder="Category description"
+          />
+          <button
+            className="add-button rounded bg-green-500 px-4 py-2 text-white"
+            onClick={handleAddCategory}
+          >
+            Add Category
+          </button>
+        </div>
+        <div className="category-list">{renderCategories()}</div>
       </div>
-      <div className="category-list">{renderCategories()}</div>
     </div>
   );
 };

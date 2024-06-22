@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Recommendations from "../Components/Recommendations";
+import Recommendations from "../components/Recommendations";
 
 const HomePage = () => {
   const userId = "663e13bbb780463036c2cc60";

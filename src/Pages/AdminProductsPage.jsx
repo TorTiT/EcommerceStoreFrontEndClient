@@ -7,8 +7,8 @@ import {
   deleteProduct,
 } from "../redux/slices/productsSlice";
 import { fetchAllCategories } from "../redux/slices/categorySlice";
-import ProductForm from "../Components/ProductForm";
-import Navbar from "../Components/Navbar";
+import ProductForm from "../components/ProductForm";
+import Navbar from "../components/Navbar";
 
 const AdminProductsPage = () => {
   const dispatch = useDispatch();

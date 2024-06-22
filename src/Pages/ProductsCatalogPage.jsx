@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAllProducts } from "../redux/slices/productsSlice";
 import { fetchAllCategories } from "../redux/slices/categorySlice";
-import ProductCard from "../Components/ProductCard";
-import Recommendations from "../Components/Recommendations";
+import ProductCard from "../components/ProductCard";
+import Recommendations from "../components/Recommendations";
 
 const ProductsCatalog = () => {
   const dispatch = useDispatch();

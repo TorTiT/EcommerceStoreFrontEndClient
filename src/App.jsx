@@ -8,9 +8,10 @@ import CartPage from "./pages/CartPage";
 import StatisticsPage from "./pages/StatisticsPage";
 import CartComponent from "./components/CartComponent";
 import Layout from "./components/Layout";
+import Footer from "./components/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import socket from "./redux/WS/websocket";
+import socket from "./redux/ws/websocket";
 
 const App = () => {
   useEffect(() => {
@@ -24,18 +25,21 @@ const App = () => {
 
   return (
     <Router>
-      <div>
+      <div className="flex min-h-screen flex-col">
         <CartComponent />
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="category" element={<CategoriesPage />} />
-            <Route path="catalog" element={<ProductsCatalogPage />} />
-            <Route path="cart" element={<CartPage />} />
-            <Route path="adminproduct" element={<AdminProductsPage />} />
-            <Route path="statistics" element={<StatisticsPage />} />
-          </Route>
-        </Routes>
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="category" element={<CategoriesPage />} />
+              <Route path="catalog" element={<ProductsCatalogPage />} />
+              <Route path="cart" element={<CartPage />} />
+              <Route path="adminproduct" element={<AdminProductsPage />} />
+              <Route path="statistics" element={<StatisticsPage />} />
+            </Route>
+          </Routes>
+        </main>
+        <Footer />
         <ToastContainer />
       </div>
     </Router>

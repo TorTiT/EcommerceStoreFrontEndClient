@@ -7,8 +7,8 @@ const Footer = () => {
         <div className="flex flex-wrap items-center justify-between">
           <div className="mb-4 w-full text-center sm:mb-0 sm:w-1/3 sm:text-left">
             <h5 className="text-lg font-semibold">Contact Us</h5>
-            <p className="mt-2">123 Pet Street, Pet City, PC 12345</p>
-            <p>Email: info@onlinepetstore.com</p>
+            <p className="mt-2">123 Shoe Lane, Sneaker City, SC 12345</p>
+            <p>Email: info@shoestore.com</p>
             <p>Phone: (123) 456-7890</p>
           </div>
           <div className="mb-4 w-full text-center sm:mb-0 sm:w-1/3">
@@ -17,11 +17,6 @@ const Footer = () => {
               <li>
                 <a href="/about" className="hover:underline">
                   About Us
-                </a>
-              </li>
-              <li>
-                <a href="/shop" className="hover:underline">
-                  Shop
                 </a>
               </li>
               <li>
@@ -56,13 +51,19 @@ const Footer = () => {
                   className="h-6 w-6"
                 />
               </a>
+              <a href="https://www.pinterest.com" className="hover:opacity-75">
+                <img
+                  src="pinterest-icon.svg"
+                  alt="Pinterest"
+                  className="h-6 w-6"
+                />
+              </a>
             </div>
           </div>
         </div>
         <div className="mt-6 border-t border-gray-700 pt-4 text-center">
           <p>
-            &copy; {new Date().getFullYear()} Online Pet Store. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} Shoe Store. All rights reserved.
           </p>
         </div>
       </div>

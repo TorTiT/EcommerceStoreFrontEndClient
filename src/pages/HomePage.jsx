@@ -54,7 +54,7 @@ const HomePage = () => {
           Login
         </Link>
         <Link
-          to="/registration"
+          to="/register"
           className="block text-lg text-blue-300 hover:underline"
         >
           New User Registration Page

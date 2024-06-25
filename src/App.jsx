@@ -1,17 +1,21 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import socket from "./redux/ws/websocket";
+//pages
 import CategoriesPage from "./pages/CategoriesPage";
 import ProductsCatalogPage from "./pages/ProductsCatalogPage";
 import AdminProductsPage from "./pages/AdminProductsPage";
 import HomePage from "./pages/HomePage";
 import CartPage from "./pages/CartPage";
 import StatisticsPage from "./pages/StatisticsPage";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+//components
 import CartComponent from "./components/CartComponent";
 import Layout from "./components/Layout";
 import Footer from "./components/Footer";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import socket from "./redux/ws/websocket";
 
 const App = () => {
   useEffect(() => {
@@ -32,6 +36,8 @@ const App = () => {
             <Route path="/" element={<Layout />}>
               <Route index element={<HomePage />} />
               <Route path="category" element={<CategoriesPage />} />
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
               <Route path="catalog" element={<ProductsCatalogPage />} />
               <Route path="cart" element={<CartPage />} />
               <Route path="adminproduct" element={<AdminProductsPage />} />

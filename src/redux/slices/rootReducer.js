@@ -4,8 +4,8 @@ import categoriesReducer from "../slices/categorySlice";
 import cartReducer from "../slices/cartSlice";
 import statisticsReducer from "../slices/statisticsSlice";
 import recommendationsReducer from "./recommendationsSlice";
-import authSlice from "./authSlice";
-import autoReducer from "./autoReducer";
+// import authSlice from "./authSlice";
+import authReducer from "./authSlice";
 
 const rootReducer = combineReducers({
   products: productsReducer,
@@ -13,8 +13,7 @@ const rootReducer = combineReducers({
   cart: cartReducer,
   statistics: statisticsReducer,
   recommendations: recommendationsReducer,
-  auth: authSlice,
-  auto: autoReducer,
+  auth: authReducer,
 });
 
 export default rootReducer;

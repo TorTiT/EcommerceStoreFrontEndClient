@@ -26,11 +26,16 @@ const localReducer = (state, action) => {
 };
 
 const ProductCard = ({ product }) => {
+  if (!product) {
+    console.error("Product data is missing");
+    return null; // Render nothing if product is undefined
+  }
+
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.items);
+  const cartItems = useSelector((state) => state.cart.items) || []; // Ensure cartItems is an array
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const userId = "663e13bbb780463036c2cc60"; // Hardcoded user ID for testing
+  const userId = useSelector((state) => state.auth.user?.user?._id); // Get user ID from auth state
 
   // Find the item in the cart and get its quantity
   const itemInCart = cartItems.find((item) => item.product === product._id);

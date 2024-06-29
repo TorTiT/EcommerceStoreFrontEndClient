@@ -19,17 +19,12 @@ export const selectCartError = createSelector(
   (cart) => cart.error,
 );
 
-// Selector to merge cart items with product details
+// Selector to get cart items with product details directly from the cart state
 export const selectCartItemsWithDetails = createSelector(
-  [selectCartItems, selectProducts],
-  (cartItems, products) =>
-    cartItems.map((item) => {
-      const productDetails = products.find(
-        (product) => product._id === item.product,
-      );
-      return {
-        ...item,
-        productDetails: productDetails || {}, // Default to empty object if not found
-      };
-    }),
+  [selectCartItems],
+  (cartItems) =>
+    cartItems.map((item) => ({
+      ...item,
+      productDetails: item.product, // Use the product field directly
+    })),
 );

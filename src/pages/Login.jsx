@@ -1,3 +1,5 @@
+// src/components/Login.js
+
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,18 +12,16 @@ function Login() {
   const navigate = useNavigate();
   const { loading, error, user } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (user) {
-      // navigate("https://www.sport5.co.il/Euro/"); real navigation
-      window.location.href = "https://www.sport5.co.il/Euro/";
-    }
-  }, [user, navigate]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Dispatching login request with:", { username, password });
     dispatch(loginRequest(username, password));
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate("/", { state: { user } }); // Redirect to HomePage with user state
+    }
+  }, [user, navigate]);
 
   return (
     <div className="form-container">

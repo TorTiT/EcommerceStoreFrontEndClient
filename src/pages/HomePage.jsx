@@ -1,14 +1,17 @@
+// src/components/HomePage.js
+
 import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Recommendations from "../components/Recommendations";
 
 const HomePage = () => {
-  const userId = "663e13bbb780463036c2cc60";
+  const user = useSelector((state) => state.auth.user?.user);
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center text-center">
       <h3 className="mb-6 text-3xl font-bold text-white">
-        Welcome To The Store
+        Welcome To The Store, {user?.userName || "Guest"}
       </h3>
       <nav className="space-y-4">
         <Link
@@ -61,7 +64,8 @@ const HomePage = () => {
         </Link>
       </nav>
       <div className="mt-8">
-        <Recommendations userId={userId} />{" "}
+        {user && <Recommendations userId={user._id} />}{" "}
+        {/* Pass the logged-in user's ID */}
       </div>
     </div>
   );

@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import socket from "./redux/ws/websocket";
+import { fetchAllProducts } from "./redux/slices/productsSlice";
+import { fetchAllCategories } from "./redux/slices/categorySlice";
+import { useDispatch } from "react-redux";
 //pages
 import CategoriesPage from "./pages/CategoriesPage";
 import ProductsCatalogPage from "./pages/ProductsCatalogPage";
@@ -18,6 +21,8 @@ import Layout from "./components/Layout";
 import Footer from "./components/Footer";
 
 const App = () => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
     // WebSocket connection is already established in the websocket.js file
     return () => {
@@ -26,6 +31,11 @@ const App = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    dispatch(fetchAllProducts());
+    dispatch(fetchAllCategories());
+  }, [dispatch]);
 
   return (
     <Router>

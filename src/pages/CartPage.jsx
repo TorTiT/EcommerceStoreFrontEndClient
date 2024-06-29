@@ -10,8 +10,8 @@ import {
   selectCartStatus,
   selectCartError,
 } from "../redux/selectors/cartSelectors";
+import { fetchAllProducts } from "../redux/slices/productsSlice";
 
-// Define local actions
 const localActions = {
   SET_ITEMS: "SET_ITEMS",
   UPDATE_ITEM_QUANTITY: "UPDATE_ITEM_QUANTITY",
@@ -19,7 +19,6 @@ const localActions = {
   SET_ERROR: "SET_ERROR",
 };
 
-// Local reducer function
 const localReducer = (state, action) => {
   switch (action.type) {
     case localActions.SET_ITEMS:
@@ -47,7 +46,7 @@ const localReducer = (state, action) => {
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const userId = "663e13bbb780463036c2cc60"; // Hardcoded user ID for testing
+  const userId = useSelector((state) => state.auth.user?.user?._id); // Get user ID from auth state
 
   const cartItemsWithDetails = useSelector(selectCartItemsWithDetails);
   const status = useSelector(selectCartStatus);
@@ -61,8 +60,9 @@ const CartPage = () => {
     },
   );
 
-  // Fetch cart data when the component mounts
+  // Fetch products and cart data when the component mounts
   useEffect(() => {
+    dispatch(fetchAllProducts());
     if (userId) {
       dispatch(fetchCart(userId));
     }
@@ -70,8 +70,8 @@ const CartPage = () => {
 
   // Update local state when cart items with details are fetched
   useEffect(() => {
+    console.log("cartItemsWithDetails:", cartItemsWithDetails);
     if (cartItemsWithDetails.length > 0) {
-      console.log("Setting local items with details", cartItemsWithDetails);
       localDispatch({
         type: localActions.SET_ITEMS,
         payload: cartItemsWithDetails,
@@ -124,10 +124,11 @@ const CartPage = () => {
   }, [localItems]);
 
   if (status === "loading") return <div>Loading...</div>;
-  if (status === "failed")
-    return (
-      <div>Error: {typeof error === "string" ? error : error.message}</div>
-    );
+  if (status === "failed") {
+    const errorMessage =
+      typeof error === "string" ? error : error?.message || "An error occurred";
+    return <div>Error: {errorMessage}</div>;
+  }
 
   console.log("Rendering CartPage with local items:", localItems);
 
@@ -181,7 +182,7 @@ const CartPage = () => {
                   </div>
                 </div>
                 <div className="total-price text-lg font-semibold">
-                  Total: ${item.price * item.quantity}
+                  Total: ${(item.price * item.quantity).toFixed(2)}
                 </div>
               </div>
               <button

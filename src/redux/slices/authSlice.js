@@ -1,96 +1,74 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+// src/reducers/authReducer.js
 
-export const login = createAsyncThunk(
-  "auth/login",
-  async ({ userName, password }, thunkAPI) => {
-    const response = await fetch("http://localhost:27017/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userName, password }),
-    });
+import {
+  LOGIN_REQUEST,
+  LOGIN_SUCCESS,
+  LOGIN_FAILURE,
+  REGISTER_REQUEST,
+  REGISTER_SUCCESS,
+  REGISTER_FAILURE,
+  LOGOUT, // Import the logout action type
+} from "../actions/authActions";
 
-    if (response.status === 200) {
-      const data = await response.json();
-      return data;
-    } else {
-      const error = await response.json();
-      return thunkAPI.rejectWithValue(error.message);
-    }
+const initialState = {
+  user: null,
+  loading: false,
+  error: null,
+  registrationSuccess: false,
+  registrationError: null,
+};
+
+const authReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case LOGIN_REQUEST:
+      console.log("Handling LOGIN_REQUEST");
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case LOGIN_SUCCESS:
+      console.log("Handling LOGIN_SUCCESS");
+      return {
+        ...state,
+        loading: false,
+        user: action.payload,
+      };
+    case LOGIN_FAILURE:
+      console.log("Handling LOGIN_FAILURE with error");
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    case REGISTER_REQUEST:
+      console.log("Handling REGISTER_REQUEST");
+      return {
+        ...state,
+        loading: true,
+        registrationSuccess: false,
+        registrationError: null,
+      };
+    case REGISTER_SUCCESS:
+      console.log("Handling REGISTER_SUCCESS");
+      return {
+        ...state,
+        loading: false,
+        registrationSuccess: true,
+      };
+    case REGISTER_FAILURE:
+      console.log("Handling REGISTER_FAILURE with error");
+      return {
+        ...state,
+        loading: false,
+        registrationError: action.payload,
+      };
+    case LOGOUT:
+      console.log("Handling LOGOUT");
+      return initialState; // Reset state to initial state on logout
+    default:
+      return state;
   }
-);
+};
 
-export const register = createAsyncThunk(
-  "auth/register",
-  async ({ userName, email, password }, thunkAPI) => {
-    const response = await fetch("http://localhost:27017/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userName, email, password }),
-    });
-
-    if (response.status === 201) {
-      const data = await response.json();
-      return data;
-    } else {
-      const error = await response.json();
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-const authSlice = createSlice({
-  name: "auth",
-  initialState: {
-    loading: false,
-    user: null,
-    error: null,
-    registrationSuccess: false,
-  },
-  reducers: {
-    clearRegistrationSuccess: (state) => {
-      state.registrationSuccess = false;
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(login.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-        state.error = null;
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.loading = false;
-        state.user = null;
-        state.error = action.payload;
-      })
-      .addCase(register.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-        state.registrationSuccess = false;
-      })
-      .addCase(register.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-        state.error = null;
-        state.registrationSuccess = true; // Set registration success to true
-      })
-      .addCase(register.rejected, (state, action) => {
-        state.loading = false;
-        state.user = null;
-        state.error = action.payload;
-        state.registrationSuccess = false;
-      });
-  },
-});
-
-export const { clearRegistrationSuccess } = authSlice.actions;
-
-export default authSlice.reducer;
+export default authReducer;

@@ -15,8 +15,9 @@ const cartSlice = createSlice({
       state.error = null; // Clear any existing errors when starting to fetch
     },
     fetchCartSuccess(state, action) {
+      console.log("fetchCartSuccess payload:", action.payload);
       state.status = "succeeded";
-      state.items = action.payload.items;
+      state.items = action.payload.items || []; // Ensure this is correct
       state.error = null; // Clear any existing errors on success
     },
     fetchCartFailure(state, action) {
@@ -72,6 +73,11 @@ const cartSlice = createSlice({
       state.status = "failed";
       state.error = action.payload.message;
     },
+    clearCart(state) {
+      state.items = [];
+      state.status = "idle";
+      state.error = null;
+    },
   },
 });
 
@@ -91,6 +97,7 @@ export const {
   buyItemsInCart,
   buyItemsInCartSuccess,
   buyItemsInCartFailure,
+  clearCart,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

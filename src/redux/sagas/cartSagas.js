@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from "redux-saga/effects";
+import { call, put, takeEvery, all } from "redux-saga/effects";
 import axios from "axios";
 import {
   fetchCart,
@@ -17,21 +17,17 @@ import {
   buyItemsInCartSuccess,
   buyItemsInCartFailure,
 } from "../slices/cartSlice";
-import {
-  fetchProductById,
-  fetchProductByIdSuccess,
-  fetchProductByIdFailure,
-} from "../slices/productsSlice";
+import { fetchProductByIdSuccess } from "../slices/productsSlice";
 
 const BASE_URL = "http://localhost:8000/cart";
 
 function* fetchCartSaga(action) {
   try {
-    const userId = action.payload;
-    const response = yield call(axios.get, `${BASE_URL}/${userId}`);
-    yield put(fetchCartSuccess(response.data));
+    const response = yield call(axios.get, `${BASE_URL}/${action.payload}`);
+    const cart = response.data;
+    yield put(fetchCartSuccess(cart));
   } catch (error) {
-    yield put(fetchCartFailure(error.response.data));
+    yield put(fetchCartFailure({ message: error.message }));
   }
 }
 

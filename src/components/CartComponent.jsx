@@ -1,3 +1,5 @@
+// src/components/CartComponent.js
+
 import React, { useState, useEffect, useReducer } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -50,7 +52,7 @@ const CartComponent = () => {
 
   const [localCartItems, localDispatch] = useReducer(cartReducer, []); // Local reducer for cart items
 
-  const userId = "663e13bbb780463036c2cc60"; // Hardcoded user ID for testing
+  const userId = useSelector((state) => state.auth.user?.user?._id); // Get user ID from auth state
 
   useEffect(() => {
     if (userId) {
@@ -59,10 +61,12 @@ const CartComponent = () => {
   }, [dispatch, userId]);
 
   useEffect(() => {
-    localDispatch({
-      type: actionTypes.SET_ITEMS,
-      payload: cartItemsWithDetails,
-    });
+    if (cartItemsWithDetails.length > 0) {
+      localDispatch({
+        type: actionTypes.SET_ITEMS,
+        payload: cartItemsWithDetails,
+      });
+    }
   }, [cartItemsWithDetails]);
 
   const toggleCart = () => {
@@ -103,10 +107,11 @@ const CartComponent = () => {
   };
 
   if (status === "loading") return <div>Loading...</div>;
-  if (status === "failed")
-    return (
-      <div>Error: {typeof error === "string" ? error : error.message}</div>
-    );
+  if (status === "failed") {
+    const errorMessage =
+      typeof error === "string" ? error : error?.message || "An error occurred";
+    return <div>Error: {errorMessage}</div>;
+  }
 
   return (
     <div>

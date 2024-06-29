@@ -1,3 +1,5 @@
+// src/components/ProductsCatalog.js
+
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAllProducts } from "../redux/slices/productsSlice";
@@ -17,6 +19,8 @@ const ProductsCatalog = () => {
     status: categoriesStatus,
     error: categoriesError,
   } = useSelector((state) => state.categories);
+
+  const userId = useSelector((state) => state.auth.user?.user?._id); // Get user ID from auth state
 
   const [filter, setFilter] = useState({ title: "", category: "", price: "" });
   const [triggerUpdate, setTriggerUpdate] = useState(0); // State to trigger re-fetch
@@ -43,8 +47,6 @@ const ProductsCatalog = () => {
       (filter.price === "" || product.price <= parseFloat(filter.price))
     );
   });
-
-  const userId = "663e13bbb780463036c2cc60"; // Hardcoded user ID for testing
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">

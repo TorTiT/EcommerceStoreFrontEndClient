@@ -1,9 +1,8 @@
-// src/components/ProductsCatalog.js
-
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAllProducts } from "../redux/slices/productsSlice";
 import { fetchAllCategories } from "../redux/slices/categorySlice";
+import { addItemToCart, fetchCart } from "../redux/slices/cartSlice";
 import ProductCard from "../components/ProductCard";
 import Recommendations from "../components/Recommendations";
 
@@ -19,8 +18,8 @@ const ProductsCatalog = () => {
     status: categoriesStatus,
     error: categoriesError,
   } = useSelector((state) => state.categories);
-
   const userId = useSelector((state) => state.auth.user?.user?._id); // Get user ID from auth state
+  const cartItems = useSelector((state) => state.cart.items); // Get cart items from the state
 
   const [filter, setFilter] = useState({ title: "", category: "", price: "" });
   const [triggerUpdate, setTriggerUpdate] = useState(0); // State to trigger re-fetch
@@ -28,16 +27,41 @@ const ProductsCatalog = () => {
   useEffect(() => {
     dispatch(fetchAllProducts());
     dispatch(fetchAllCategories());
-  }, [dispatch]);
+    if (userId) {
+      dispatch(fetchCart(userId));
+    }
+  }, [dispatch, userId]);
 
   const handleFilterChange = (e) => {
     setFilter({ ...filter, [e.target.name]: e.target.value });
   };
 
-  const handlePurchase = () => {
-    // Handle the purchase logic here
-    // After successful purchase, trigger the update
-    setTriggerUpdate(triggerUpdate + 1);
+  const handlePurchase = (product) => {
+    // Check if the product is already in the cart
+    const existingCartItem = cartItems.find(
+      (item) => item.product._id === product._id,
+    );
+    if (existingCartItem) {
+      // If the product is already in the cart, update its quantity
+      dispatch(
+        updateCartItem({
+          userId,
+          itemId: existingCartItem._id,
+          updateDetails: { quantity: existingCartItem.quantity + 1 },
+        }),
+      );
+    } else {
+      // If the product is not in the cart, add it to the cart
+      const itemDetails = {
+        product: product._id,
+        quantity: 1,
+        size: product.size[0], // Assuming default size
+        color: product.color, // Assuming default color
+        price: product.price,
+      };
+      dispatch(addItemToCart({ userId, itemDetails }));
+    }
+    setTriggerUpdate(triggerUpdate + 1); // Trigger the update for recommendations
   };
 
   const filteredProducts = products.filter((product) => {
@@ -98,7 +122,8 @@ const ProductsCatalog = () => {
                   <ProductCard
                     key={product._id}
                     product={product}
-                    onPurchase={handlePurchase}
+                    onPurchase={() => handlePurchase(product)}
+                    cartItems={cartItems}
                   />
                 ))
               )}

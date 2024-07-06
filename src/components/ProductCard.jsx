@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import {
@@ -11,6 +11,7 @@ import {
 const localActions = {
   INCREMENT_QUANTITY: "INCREMENT_QUANTITY",
   DECREMENT_QUANTITY: "DECREMENT_QUANTITY",
+  SET_QUANTITY: "SET_QUANTITY",
 };
 
 // Local reducer function
@@ -19,7 +20,9 @@ const localReducer = (state, action) => {
     case localActions.INCREMENT_QUANTITY:
       return { ...state, quantity: state.quantity + 1 };
     case localActions.DECREMENT_QUANTITY:
-      return { ...state, quantity: state.quantity - 1 };
+      return { ...state, quantity: Math.max(0, state.quantity - 1) };
+    case localActions.SET_QUANTITY:
+      return { ...state, quantity: action.payload };
     default:
       return state;
   }
@@ -38,7 +41,7 @@ const ProductCard = ({ product }) => {
   const userId = useSelector((state) => state.auth.user?.user?._id); // Get user ID from auth state
 
   // Find the item in the cart and get its quantity
-  const itemInCart = cartItems.find((item) => item.product === product._id);
+  const itemInCart = cartItems.find((item) => item.product._id === product._id);
   const initialQuantity = itemInCart ? itemInCart.quantity : 0;
 
   const [localItem, localDispatch] = useReducer(localReducer, {
@@ -48,6 +51,18 @@ const ProductCard = ({ product }) => {
     color: product.color,
     size: product.size[0], // Example size, assuming product.size is an array
   });
+
+  // Synchronize local state with Redux state
+  useEffect(() => {
+    if (itemInCart) {
+      localDispatch({
+        type: localActions.SET_QUANTITY,
+        payload: itemInCart.quantity,
+      });
+    } else {
+      localDispatch({ type: localActions.SET_QUANTITY, payload: 0 });
+    }
+  }, [itemInCart]);
 
   const handleAddToCart = () => {
     localDispatch({ type: localActions.INCREMENT_QUANTITY });
@@ -67,6 +82,8 @@ const ProductCard = ({ product }) => {
   const handleRemoveFromCart = () => {
     if (localItem.quantity === 1) {
       dispatch(deleteCartItem({ userId, itemId: itemInCart._id }));
+      localDispatch({ type: localActions.SET_QUANTITY, payload: 0 });
+      toast.success("Item removed from cart!");
     } else {
       localDispatch({ type: localActions.DECREMENT_QUANTITY });
       const itemDetails = {
@@ -82,8 +99,8 @@ const ProductCard = ({ product }) => {
           itemId: itemInCart._id,
           updateDetails: itemDetails,
         }),
-        toast.success("Item removed from cart!"),
       );
+      toast.success("Item quantity updated!");
     }
   };
 

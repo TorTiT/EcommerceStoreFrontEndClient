@@ -6,6 +6,7 @@ import watchSaveState from "./saveStateSaga";
 import statisticsSagas from "./statisticsSagas";
 import recommendationsSagas from "./recommendationsSagas";
 import authSaga from "./authSaga";
+import customersSagas from "./customersSagas";
 
 export default function* rootSaga() {
   yield all([
@@ -16,5 +17,6 @@ export default function* rootSaga() {
     watchSaveState(),
     recommendationsSagas(),
     authSaga(),
+    customersSagas(),
   ]);
 }

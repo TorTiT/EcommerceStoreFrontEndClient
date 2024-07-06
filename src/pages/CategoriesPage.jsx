@@ -6,7 +6,6 @@ import {
   updateCategory,
   deleteCategory,
 } from "../redux/slices/categorySlice";
-import Navbar from "../components/Navbar";
 
 const CategoriesPage = () => {
   const dispatch = useDispatch();

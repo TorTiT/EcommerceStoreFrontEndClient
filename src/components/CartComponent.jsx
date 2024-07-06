@@ -1,6 +1,4 @@
-// src/components/CartComponent.js
-
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchCart,
@@ -14,6 +12,7 @@ import {
   selectCartError,
 } from "../redux/selectors/cartSelectors";
 import { toast } from "react-toastify";
+import { FaShoppingCart } from "react-icons/fa";
 
 // Define action types for the reducer
 const actionTypes = {
@@ -45,10 +44,12 @@ const cartReducer = (state, action) => {
 
 const CartComponent = () => {
   const [isOpen, setIsOpen] = useState(false); // State to manage if the cart is open
-  const cartItemsWithDetails = useSelector(selectCartItemsWithDetails);
+  const cartItemsWithDetails = useSelector(selectCartItemsWithDetails) || [];
   const status = useSelector(selectCartStatus);
   const error = useSelector(selectCartError);
   const dispatch = useDispatch();
+  const cartRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const [localCartItems, localDispatch] = useReducer(cartReducer, []); // Local reducer for cart items
 
@@ -61,15 +62,14 @@ const CartComponent = () => {
   }, [dispatch, userId]);
 
   useEffect(() => {
-    if (cartItemsWithDetails.length > 0) {
-      localDispatch({
-        type: actionTypes.SET_ITEMS,
-        payload: cartItemsWithDetails,
-      });
-    }
+    localDispatch({
+      type: actionTypes.SET_ITEMS,
+      payload: cartItemsWithDetails,
+    });
   }, [cartItemsWithDetails]);
 
-  const toggleCart = () => {
+  const toggleCart = (event) => {
+    event.stopPropagation();
     setIsOpen(!isOpen); // Toggle cart open/close
   };
 
@@ -106,6 +106,24 @@ const CartComponent = () => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        cartRef.current &&
+        !cartRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [cartRef, buttonRef]);
+
   if (status === "loading") return <div>Loading...</div>;
   if (status === "failed") {
     const errorMessage =
@@ -116,8 +134,9 @@ const CartComponent = () => {
   return (
     <div>
       <div
-        className={`fixed right-0 top-0 z-50 h-full transition-transform duration-300 ${
-          isOpen ? "w-64 translate-x-0" : "w-0 translate-x-full"
+        ref={cartRef}
+        className={`fixed left-0 top-0 z-50 h-full transition-transform duration-300 ${
+          isOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full"
         } bg-white shadow-lg`}
       >
         <div
@@ -125,48 +144,52 @@ const CartComponent = () => {
         >
           <h3 className="text-lg font-bold">Shopping Cart</h3>
           {error && <div className="text-red-500">{error}</div>}
-          {localCartItems.map((item) => (
-            <div key={item._id} className="mt-4 flex items-center">
-              {item.productDetails?.images?.[0] && (
-                <img
-                  src={item.productDetails.images[0]}
-                  alt={item.productDetails.name}
-                  className="h-16 w-16 rounded object-cover"
-                />
-              )}
-              <div className="ml-4">
-                <h4 className="font-bold">
-                  {item.productDetails?.name || "Unknown Product"}
-                </h4>
-                <p>${item.price}</p>
-                <div className="mt-2 flex items-center">
+          {localCartItems.length === 0 ? (
+            <div>Your cart is empty</div>
+          ) : (
+            localCartItems.map((item) => (
+              <div key={item._id} className="mt-4 flex items-center">
+                {item.productDetails?.images?.[0] && (
+                  <img
+                    src={item.productDetails.images[0]}
+                    alt={item.productDetails.name}
+                    className="h-16 w-16 rounded object-cover"
+                  />
+                )}
+                <div className="ml-4">
+                  <h4 className="font-bold">
+                    {item.productDetails?.name || "Unknown Product"}
+                  </h4>
+                  <p>${item.price}</p>
+                  <div className="mt-2 flex items-center">
+                    <button
+                      onClick={() =>
+                        handleUpdateItemQuantity(item._id, item.quantity - 1)
+                      }
+                      className="mr-2 rounded bg-red-500 px-2 py-1 text-white"
+                    >
+                      -
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      onClick={() =>
+                        handleUpdateItemQuantity(item._id, item.quantity + 1)
+                      }
+                      className="ml-2 rounded bg-blue-500 px-2 py-1 text-white"
+                    >
+                      +
+                    </button>
+                  </div>
                   <button
-                    onClick={() =>
-                      handleUpdateItemQuantity(item._id, item.quantity - 1)
-                    }
-                    className="mr-2 rounded bg-red-500 px-2 py-1 text-white"
+                    className="mt-2 rounded bg-red-500 px-2 py-1 text-white focus:outline-none"
+                    onClick={() => handleRemoveItem(item._id)}
                   >
-                    -
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    onClick={() =>
-                      handleUpdateItemQuantity(item._id, item.quantity + 1)
-                    }
-                    className="ml-2 rounded bg-blue-500 px-2 py-1 text-white"
-                  >
-                    +
+                    Remove
                   </button>
                 </div>
-                <button
-                  className="mt-2 rounded bg-red-500 px-2 py-1 text-white focus:outline-none"
-                  onClick={() => handleRemoveItem(item._id)}
-                >
-                  Remove
-                </button>
               </div>
-            </div>
-          ))}
+            ))
+          )}
           <div className="mt-4 font-bold">
             Total: $
             {localCartItems
@@ -175,11 +198,17 @@ const CartComponent = () => {
           </div>
         </div>
       </div>
-      <div className="fixed right-0 top-0 z-50 mr-2 mt-2">
+      <div
+        ref={buttonRef}
+        className={`fixed left-0 top-20 z-50 ml-2 transition-transform duration-300 ${
+          isOpen ? "translate-x-64" : "translate-x-0"
+        }`}
+      >
         <button
           className="rounded bg-blue-500 px-2 py-1 text-white focus:outline-none"
           onClick={toggleCart}
         >
+          <FaShoppingCart className="mr-1 inline" />
           {isOpen ? "<" : ">"}
         </button>
       </div>

@@ -16,6 +16,9 @@ const Navbar = () => {
           <Link to="/category" className="hover:underline">
             Categories Page
           </Link>
+          <Link to="/customers" className="hover:underline">
+            Customers Page
+          </Link>
           <Link to="/cart" className="hover:underline">
             Cart Page
           </Link>

@@ -15,6 +15,7 @@ import CartPage from "./pages/CartPage";
 import StatisticsPage from "./pages/StatisticsPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import CustomersPage from "./pages/CustomersPage";
 //components
 import CartComponent from "./components/CartComponent";
 import Layout from "./components/Layout";
@@ -52,6 +53,7 @@ const App = () => {
               <Route path="cart" element={<CartPage />} />
               <Route path="adminproduct" element={<AdminProductsPage />} />
               <Route path="statistics" element={<StatisticsPage />} />
+              <Route path="customers" element={<CustomersPage />} />
             </Route>
           </Routes>
         </main>

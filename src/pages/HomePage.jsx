@@ -1,5 +1,3 @@
-// src/components/HomePage.js
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -49,12 +47,6 @@ const HomePage = () => {
           className="block text-lg text-blue-300 hover:underline"
         >
           Admin Products Catalog
-        </Link>
-        <Link
-          to="/login"
-          className="block text-lg text-blue-300 hover:underline"
-        >
-          Login
         </Link>
         <Link
           to="/register"

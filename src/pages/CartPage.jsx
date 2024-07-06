@@ -48,7 +48,7 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.auth.user?.user?._id); // Get user ID from auth state
 
-  const cartItemsWithDetails = useSelector(selectCartItemsWithDetails);
+  const cartItemsWithDetails = useSelector(selectCartItemsWithDetails) || [];
   const status = useSelector(selectCartStatus);
   const error = useSelector(selectCartError);
 
@@ -70,7 +70,6 @@ const CartPage = () => {
 
   // Update local state when cart items with details are fetched
   useEffect(() => {
-    console.log("cartItemsWithDetails:", cartItemsWithDetails);
     if (cartItemsWithDetails.length > 0) {
       localDispatch({
         type: localActions.SET_ITEMS,
@@ -81,7 +80,6 @@ const CartPage = () => {
 
   const handleRemoveItem = useCallback(
     (itemId) => {
-      console.log(`Dispatching remove action for item with ID: ${itemId}`);
       dispatch(deleteCartItem({ userId, itemId })).then(() => {
         localDispatch({ type: localActions.REMOVE_ITEM, payload: { itemId } });
       });
@@ -130,8 +128,6 @@ const CartPage = () => {
     return <div>Error: {errorMessage}</div>;
   }
 
-  console.log("Rendering CartPage with local items:", localItems);
-
   // Filter out items without complete productDetails
   const validLocalItems = localItems.filter(
     (item) => item.productDetails && Object.keys(item.productDetails).length,
@@ -142,58 +138,62 @@ const CartPage = () => {
       <div className="container mx-auto p-4">
         <h3 className="mb-4 text-2xl font-bold text-blue-600">Shopping Cart</h3>
         {localError && <div className="mb-4 text-red-500">{localError}</div>}
-        <div className="cart-items grid gap-4">
-          {validLocalItems.map((item) => (
-            <div
-              key={item._id}
-              className="cart-item flex items-center justify-between rounded bg-white p-4 shadow-md"
-            >
-              {item.productDetails.images?.[0] && (
-                <img
-                  src={item.productDetails.images[0]}
-                  alt={item.productDetails.name}
-                  className="mr-4 h-16 w-16 object-cover"
-                />
-              )}
-              <div className="flex flex-1 items-center justify-between">
-                <div className="item-info">
-                  <span className="text-lg font-semibold">
-                    {item.productDetails.name}
-                  </span>
-                  <span className="block text-gray-500">${item.price}</span>
-                  <div className="quantity-controls mt-2 flex items-center">
-                    <button
-                      className="mr-2 rounded bg-blue-500 px-2 py-1 text-white"
-                      onClick={() =>
-                        handleQuantityChange(item._id, item.quantity - 1)
-                      }
-                    >
-                      -
-                    </button>
-                    <span className="px-2">{item.quantity}</span>
-                    <button
-                      className="ml-2 rounded bg-blue-500 px-2 py-1 text-white"
-                      onClick={() =>
-                        handleQuantityChange(item._id, item.quantity + 1)
-                      }
-                    >
-                      +
-                    </button>
+        {validLocalItems.length === 0 ? (
+          <p>Your cart is empty.</p>
+        ) : (
+          <div className="cart-items grid gap-4">
+            {validLocalItems.map((item) => (
+              <div
+                key={item._id}
+                className="cart-item flex items-center justify-between rounded bg-white p-4 shadow-md"
+              >
+                {item.productDetails.images?.[0] && (
+                  <img
+                    src={item.productDetails.images[0]}
+                    alt={item.productDetails.name}
+                    className="mr-4 h-16 w-16 object-cover"
+                  />
+                )}
+                <div className="flex flex-1 items-center justify-between">
+                  <div className="item-info">
+                    <span className="text-lg font-semibold">
+                      {item.productDetails.name}
+                    </span>
+                    <span className="block text-gray-500">${item.price}</span>
+                    <div className="quantity-controls mt-2 flex items-center">
+                      <button
+                        className="mr-2 rounded bg-blue-500 px-2 py-1 text-white"
+                        onClick={() =>
+                          handleQuantityChange(item._id, item.quantity - 1)
+                        }
+                      >
+                        -
+                      </button>
+                      <span className="px-2">{item.quantity}</span>
+                      <button
+                        className="ml-2 rounded bg-blue-500 px-2 py-1 text-white"
+                        onClick={() =>
+                          handleQuantityChange(item._id, item.quantity + 1)
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div className="total-price text-lg font-semibold">
+                    Total: ${(item.price * item.quantity).toFixed(2)}
                   </div>
                 </div>
-                <div className="total-price text-lg font-semibold">
-                  Total: ${(item.price * item.quantity).toFixed(2)}
-                </div>
+                <button
+                  className="remove-item ml-4 rounded bg-red-500 px-3 py-1 text-white"
+                  onClick={() => handleRemoveItem(item._id)}
+                >
+                  Remove
+                </button>
               </div>
-              <button
-                className="remove-item ml-4 rounded bg-red-500 px-3 py-1 text-white"
-                onClick={() => handleRemoveItem(item._id)}
-              >
-                Remove
-              </button>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         <div className="cart-summary mt-6 rounded bg-white p-4 text-right shadow-md">
           <span className="text-xl font-bold">Total: ${total}</span>
           <button className="checkout-btn ml-4 rounded bg-green-500 px-4 py-2 text-white">

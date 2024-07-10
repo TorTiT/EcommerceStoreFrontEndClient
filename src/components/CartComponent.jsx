@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useReducer, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchCart,
-  deleteCartItem,
-  addItemToCart,
-  updateCartItem,
+  fetchCartRequest,
+  deleteCartItemRequest,
+  addItemToCartRequest,
+  updateCartItemRequest,
 } from "../redux/slices/cartSlice";
 import {
   selectCartItemsWithDetails,
@@ -13,6 +13,7 @@ import {
 } from "../redux/selectors/cartSelectors";
 import { toast } from "react-toastify";
 import { FaShoppingCart } from "react-icons/fa";
+import { useSpring, animated } from "@react-spring/web";
 
 // Define action types for the reducer
 const actionTypes = {
@@ -57,7 +58,7 @@ const CartComponent = () => {
 
   useEffect(() => {
     if (userId) {
-      dispatch(fetchCart(userId));
+      dispatch(fetchCartRequest(userId));
     }
   }, [dispatch, userId]);
 
@@ -75,7 +76,7 @@ const CartComponent = () => {
 
   const handleRemoveItem = (itemId) => {
     localDispatch({ type: actionTypes.REMOVE_ITEM, payload: itemId }); // Optimistically remove item
-    dispatch(deleteCartItem({ userId, itemId }));
+    dispatch(deleteCartItemRequest({ userId, itemId }));
     toast.success("Item removed from cart");
   };
 
@@ -88,7 +89,7 @@ const CartComponent = () => {
     } else {
       const newItem = { ...itemDetails, _id: Date.now().toString() }; // Temporary ID for new item
       localDispatch({ type: actionTypes.ADD_ITEM, payload: newItem }); // Optimistically add item
-      dispatch(addItemToCart({ userId, itemDetails }));
+      dispatch(addItemToCartRequest({ userId, itemDetails }));
       toast.success("Item added to cart");
     }
   };
@@ -101,7 +102,9 @@ const CartComponent = () => {
     if (quantity <= 0) {
       handleRemoveItem(itemId);
     } else {
-      dispatch(updateCartItem({ userId, itemId, updateDetails: { quantity } }));
+      dispatch(
+        updateCartItemRequest({ userId, itemId, updateDetails: { quantity } }),
+      );
       toast.success("Cart updated");
     }
   };
@@ -124,6 +127,10 @@ const CartComponent = () => {
     };
   }, [cartRef, buttonRef]);
 
+  const slideInStyle = useSpring({
+    transform: isOpen ? "translateX(0%)" : "translateX(-100%)",
+  });
+
   if (status === "loading") return <div>Loading...</div>;
   if (status === "failed") {
     const errorMessage =
@@ -133,15 +140,12 @@ const CartComponent = () => {
 
   return (
     <div>
-      <div
+      <animated.div
         ref={cartRef}
-        className={`fixed left-0 top-0 z-50 h-full transition-transform duration-300 ${
-          isOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full"
-        } bg-white shadow-lg`}
+        style={slideInStyle}
+        className="fixed left-0 top-0 z-50 h-full w-64 bg-white shadow-lg"
       >
-        <div
-          className={`h-full flex-col overflow-y-auto p-4 ${isOpen ? "flex" : "hidden"}`}
-        >
+        <div className="h-full flex-col overflow-y-auto p-4">
           <h3 className="text-lg font-bold">Shopping Cart</h3>
           {error && <div className="text-red-500">{error}</div>}
           {localCartItems.length === 0 ? (
@@ -197,10 +201,10 @@ const CartComponent = () => {
               .toFixed(2)}
           </div>
         </div>
-      </div>
+      </animated.div>
       <div
         ref={buttonRef}
-        className={`fixed left-0 top-20 z-50 ml-2 transition-transform duration-300 ${
+        className={`fixed bottom-4 left-0 z-50 ml-2 transition-transform duration-300 ${
           isOpen ? "translate-x-64" : "translate-x-0"
         }`}
       >

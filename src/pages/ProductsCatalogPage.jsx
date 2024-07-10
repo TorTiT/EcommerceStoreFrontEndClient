@@ -2,11 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAllProducts } from "../redux/slices/productsSlice";
 import { fetchAllCategories } from "../redux/slices/categorySlice";
-import { addItemToCart, fetchCart } from "../redux/slices/cartSlice";
+import { fetchDealsRequest } from "../redux/slices/dealsSlice";
+import {
+  addItemToCartRequest,
+  fetchCartRequest,
+  updateCartItemRequest,
+} from "../redux/slices/cartSlice";
 import ProductCard from "../components/ProductCard";
 import Recommendations from "../components/Recommendations";
+import { useTransition, animated } from "@react-spring/web";
+import { toast } from "react-toastify";
 
-const ProductsCatalog = () => {
+const ProductsCatalogPage = () => {
   const dispatch = useDispatch();
   const {
     products,
@@ -18,17 +25,23 @@ const ProductsCatalog = () => {
     status: categoriesStatus,
     error: categoriesError,
   } = useSelector((state) => state.categories);
-  const userId = useSelector((state) => state.auth.user?.user?._id); // Get user ID from auth state
-  const cartItems = useSelector((state) => state.cart.items); // Get cart items from the state
+  const { deals } = useSelector((state) => state.deals);
+  const userId = useSelector((state) => state.auth.user?.user?._id);
+  const cartItems = useSelector((state) => state.cart.items);
 
   const [filter, setFilter] = useState({ title: "", category: "", price: "" });
-  const [triggerUpdate, setTriggerUpdate] = useState(0); // State to trigger re-fetch
 
+  // Fetch data only once when the component mounts
   useEffect(() => {
     dispatch(fetchAllProducts());
     dispatch(fetchAllCategories());
+    dispatch(fetchDealsRequest());
+  }, [dispatch]);
+
+  // Fetch the cart only if the user is logged in
+  useEffect(() => {
     if (userId) {
-      dispatch(fetchCart(userId));
+      dispatch(fetchCartRequest(userId));
     }
   }, [dispatch, userId]);
 
@@ -37,39 +50,53 @@ const ProductsCatalog = () => {
   };
 
   const handlePurchase = (product) => {
-    // Check if the product is already in the cart
+    if (!userId) {
+      toast.error("Please log in to purchase items");
+      return;
+    }
     const existingCartItem = cartItems.find(
       (item) => item.product._id === product._id,
     );
     if (existingCartItem) {
-      // If the product is already in the cart, update its quantity
       dispatch(
-        updateCartItem({
+        updateCartItemRequest({
           userId,
           itemId: existingCartItem._id,
           updateDetails: { quantity: existingCartItem.quantity + 1 },
         }),
       );
     } else {
-      // If the product is not in the cart, add it to the cart
       const itemDetails = {
         product: product._id,
         quantity: 1,
         size: product.size[0], // Assuming default size
         color: product.color, // Assuming default color
-        price: product.price,
+        price: product.dealPrice || product.price, // Use deal price if available
       };
-      dispatch(addItemToCart({ userId, itemDetails }));
+      dispatch(addItemToCartRequest({ userId, itemDetails }));
     }
-    setTriggerUpdate(triggerUpdate + 1); // Trigger the update for recommendations
   };
 
-  const filteredProducts = products.filter((product) => {
-    return (
-      product.name.toLowerCase().includes(filter.title.toLowerCase()) &&
-      (filter.category === "" || product.category === filter.category) &&
-      (filter.price === "" || product.price <= parseFloat(filter.price))
-    );
+  const filteredProducts = products
+    .map((product) => {
+      const deal = deals.find((deal) => deal.product._id === product._id);
+      return deal
+        ? { ...product, dealPrice: deal.dealPrice }
+        : { ...product, dealPrice: null };
+    })
+    .filter((product) => {
+      return (
+        product.name.toLowerCase().includes(filter.title.toLowerCase()) &&
+        (filter.category === "" || product.category === filter.category) &&
+        (filter.price === "" || product.price <= parseFloat(filter.price))
+      );
+    });
+
+  const transitions = useTransition(filteredProducts, {
+    from: { opacity: 0, transform: "scale(0.9)" },
+    enter: { opacity: 1, transform: "scale(1)" },
+    leave: { opacity: 0, transform: "scale(0.9)" },
+    keys: filteredProducts.map((product) => product._id),
   });
 
   return (
@@ -118,25 +145,25 @@ const ProductsCatalog = () => {
               {filteredProducts.length === 0 ? (
                 <p className="text-red-600">No products found</p>
               ) : (
-                filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product._id}
-                    product={product}
-                    onPurchase={() => handlePurchase(product)}
-                    cartItems={cartItems}
-                  />
+                transitions((style, product) => (
+                  <animated.div style={style} key={product._id}>
+                    <ProductCard
+                      product={product}
+                      onPurchase={() => handlePurchase(product)}
+                      dealPrice={product.dealPrice} // Pass the deal price to ProductCard
+                    />
+                  </animated.div>
                 ))
               )}
             </div>
           )}
         </div>
         <div className="pt-4 lg:w-1/4 lg:pl-4 lg:pt-0">
-          <Recommendations userId={userId} triggerUpdate={triggerUpdate} />{" "}
-          {/* Include the Recommendations component */}
+          <Recommendations userId={userId} />
         </div>
       </div>
     </div>
   );
 };
 
-export default ProductsCatalog;
+export default ProductsCatalogPage;

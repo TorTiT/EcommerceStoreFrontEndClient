@@ -10,7 +10,7 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    fetchCart(state) {
+    fetchCartRequest(state) {
       state.status = "loading";
       state.error = null; // Clear any existing errors when starting to fetch
     },
@@ -24,7 +24,7 @@ const cartSlice = createSlice({
       state.status = "failed";
       state.error = action.payload.message;
     },
-    addItemToCart(state) {
+    addItemToCartRequest(state) {
       state.status = "loading";
     },
     addItemToCartSuccess(state, action) {
@@ -35,7 +35,7 @@ const cartSlice = createSlice({
       state.status = "failed";
       state.error = action.payload.message;
     },
-    updateCartItem(state) {
+    updateCartItemRequest(state) {
       state.status = "idle"; // Do not change status to avoid re-renders
     },
     updateCartItemSuccess(state, action) {
@@ -51,7 +51,7 @@ const cartSlice = createSlice({
       state.status = "failed";
       state.error = action.payload.message;
     },
-    deleteCartItem(state) {
+    deleteCartItemRequest(state) {
       state.status = "loading";
     },
     deleteCartItemSuccess(state, action) {
@@ -62,7 +62,7 @@ const cartSlice = createSlice({
       state.status = "failed";
       state.error = action.payload.message;
     },
-    buyItemsInCart(state) {
+    buyItemsInCartRequest(state) {
       state.status = "loading";
     },
     buyItemsInCartSuccess(state, action) {
@@ -82,19 +82,19 @@ const cartSlice = createSlice({
 });
 
 export const {
-  fetchCart,
+  fetchCartRequest,
   fetchCartSuccess,
   fetchCartFailure,
-  addItemToCart,
+  addItemToCartRequest,
   addItemToCartSuccess,
   addItemToCartFailure,
-  updateCartItem,
+  updateCartItemRequest,
   updateCartItemSuccess,
   updateCartItemFailure,
-  deleteCartItem,
+  deleteCartItemRequest,
   deleteCartItemSuccess,
   deleteCartItemFailure,
-  buyItemsInCart,
+  buyItemsInCartRequest,
   buyItemsInCartSuccess,
   buyItemsInCartFailure,
   clearCart,

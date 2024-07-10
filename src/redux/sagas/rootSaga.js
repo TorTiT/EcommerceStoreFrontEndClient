@@ -7,6 +7,7 @@ import statisticsSagas from "./statisticsSagas";
 import recommendationsSagas from "./recommendationsSagas";
 import authSaga from "./authSaga";
 import customersSagas from "./customersSagas";
+import dealsSaga from "./dealsSaga";
 
 export default function* rootSaga() {
   yield all([
@@ -18,5 +19,6 @@ export default function* rootSaga() {
     recommendationsSagas(),
     authSaga(),
     customersSagas(),
+    dealsSaga(),
   ]);
 }

@@ -2,14 +2,25 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import LogoutButton from "./LogoutButton";
+import { useSpring, animated } from "@react-spring/web";
 
 const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
 
+  const fade = useSpring({
+    from: { opacity: 0 },
+    to: { opacity: 1 },
+  });
+
+  const slideIn = useSpring({
+    from: { transform: "translateX(-100%)" },
+    to: { transform: "translateX(0%)" },
+  });
+
   return (
-    <div className="bg-stone-700 text-white">
+    <animated.div style={fade} className="bg-stone-700 text-white">
       <nav className="container mx-auto flex items-center justify-between p-4">
-        <div className="flex space-x-4">
+        <animated.div style={slideIn} className="flex space-x-4">
           <Link to="/" className="hover:underline">
             Home
           </Link>
@@ -31,7 +42,10 @@ const Navbar = () => {
           <Link to="/adminproduct" className="hover:underline">
             Admin Products Catalog
           </Link>
-        </div>
+          <Link to="/deals" className="hover:underline">
+            Admin Deals Page
+          </Link>
+        </animated.div>
         <div className="flex items-center space-x-4">
           {user ? (
             <>
@@ -45,7 +59,7 @@ const Navbar = () => {
           )}
         </div>
       </nav>
-    </div>
+    </animated.div>
   );
 };
 

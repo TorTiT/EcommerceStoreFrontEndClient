@@ -1,10 +1,10 @@
 import { takeEvery, select } from "redux-saga/effects";
 import { saveState } from "../localStorageHelpers";
 import {
-  fetchCart,
-  addItemToCart,
-  updateCartItem,
-  deleteCartItem,
+  fetchCartRequest,
+  addItemToCartRequest,
+  updateCartItemRequest,
+  deleteCartItemRequest,
 } from "../slices/cartSlice";
 import {
   fetchAllProducts,
@@ -29,10 +29,10 @@ function* saveStateSaga() {
 export default function* watchSaveState() {
   yield takeEvery(
     [
-      fetchCart.type,
-      addItemToCart.type,
-      updateCartItem.type,
-      deleteCartItem.type,
+      fetchCartRequest.type,
+      addItemToCartRequest.type,
+      updateCartItemRequest.type,
+      deleteCartItemRequest.type,
       fetchAllProducts.type,
       updateProduct.type,
       deleteProduct.type,
@@ -42,6 +42,6 @@ export default function* watchSaveState() {
       updateCategory.type,
       deleteCategory.type,
     ],
-    saveStateSaga
+    saveStateSaga,
   );
 }

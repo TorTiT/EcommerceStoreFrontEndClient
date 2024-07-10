@@ -7,6 +7,7 @@ import recommendationsReducer from "./recommendationsSlice";
 // import authSlice from "./authSlice";
 import authReducer from "./authSlice";
 import customersReducer from "./customersSlice";
+import dealsReducer from "./dealsSlice";
 
 const rootReducer = combineReducers({
   products: productsReducer,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   recommendations: recommendationsReducer,
   auth: authReducer,
   customers: customersReducer,
+  deals: dealsReducer,
 });
 
 export default rootReducer;

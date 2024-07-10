@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useCallback, useReducer } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchCart,
-  deleteCartItem,
-  updateCartItem,
+  fetchCartRequest,
+  deleteCartItemRequest,
+  updateCartItemRequest,
 } from "../redux/slices/cartSlice";
 import {
   selectCartItemsWithDetails,
@@ -64,7 +64,7 @@ const CartPage = () => {
   useEffect(() => {
     dispatch(fetchAllProducts());
     if (userId) {
-      dispatch(fetchCart(userId));
+      dispatch(fetchCartRequest(userId));
     }
   }, [dispatch, userId]);
 
@@ -80,7 +80,7 @@ const CartPage = () => {
 
   const handleRemoveItem = useCallback(
     (itemId) => {
-      dispatch(deleteCartItem({ userId, itemId })).then(() => {
+      dispatch(deleteCartItemRequest({ userId, itemId })).then(() => {
         localDispatch({ type: localActions.REMOVE_ITEM, payload: { itemId } });
       });
     },
@@ -97,7 +97,11 @@ const CartPage = () => {
           payload: { itemId, quantity },
         });
         dispatch(
-          updateCartItem({ userId, itemId, updateDetails: { quantity } }),
+          updateCartItemRequest({
+            userId,
+            itemId,
+            updateDetails: { quantity },
+          }),
         ).catch((error) => {
           const errorMessage =
             error.response?.data?.message ||

@@ -1,103 +1,77 @@
-import { call, put, takeEvery, all } from "redux-saga/effects";
+import { call, put, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import {
-  fetchCart,
+  fetchCartRequest,
   fetchCartSuccess,
   fetchCartFailure,
-  addItemToCart,
+  addItemToCartRequest,
   addItemToCartSuccess,
   addItemToCartFailure,
-  updateCartItem,
+  updateCartItemRequest,
   updateCartItemSuccess,
   updateCartItemFailure,
-  deleteCartItem,
+  deleteCartItemRequest,
   deleteCartItemSuccess,
   deleteCartItemFailure,
-  buyItemsInCart,
-  buyItemsInCartSuccess,
-  buyItemsInCartFailure,
 } from "../slices/cartSlice";
-import { fetchProductByIdSuccess } from "../slices/productsSlice";
 
-const BASE_URL = "http://localhost:8000/cart";
+const BASE_URL = "http://localhost:8000";
 
-function* fetchCartSaga(action) {
+function* fetchCart(action) {
   try {
-    const response = yield call(axios.get, `${BASE_URL}/${action.payload}`);
-    const cart = response.data;
-    yield put(fetchCartSuccess(cart));
+    const response = yield call(
+      axios.get,
+      `${BASE_URL}/cart/${action.payload}`,
+    );
+    yield put(fetchCartSuccess(response.data));
   } catch (error) {
-    yield put(fetchCartFailure({ message: error.message }));
+    yield put(fetchCartFailure(error.message));
   }
 }
 
-function* addItemToCartSaga(action) {
+function* addCartItem(action) {
   try {
-    const { userId, itemDetails } = action.payload;
     const response = yield call(
       axios.post,
-      `${BASE_URL}/${userId}/item`,
-      itemDetails,
+      `${BASE_URL}/cart/${action.payload.userId}/item`,
+      action.payload.itemDetails,
     );
-    const newItem = response.data;
-
-    // Add logging
-    console.log("Response from server:", newItem);
-
-    if (newItem.product) {
-      const productDetailsResponse = yield call(
-        axios.get,
-        `http://localhost:8000/products/${newItem.product}`,
-      );
-      yield put(addItemToCartSuccess(newItem));
-      yield put(fetchProductByIdSuccess(productDetailsResponse.data)); // Add product details to state
-    } else {
-      throw new Error("Product ID is undefined in the response");
-    }
+    yield put(addItemToCartSuccess(response.data));
   } catch (error) {
-    const message = error.response?.data?.message || error.message;
-    yield put(addItemToCartFailure({ message }));
+    yield put(addItemToCartFailure(error.message));
   }
 }
 
 function* updateCartItemSaga(action) {
   try {
-    const { userId, itemId, updateDetails } = action.payload;
-    yield call(
+    const response = yield call(
       axios.put,
-      `${BASE_URL}/${userId}/item/${itemId}`,
-      updateDetails,
+      `${BASE_URL}/cart/${action.payload.userId}/item/${action.payload.itemId}`,
+      action.payload.updateDetails,
     );
-    // No need to update Redux state here, handled locally in component
+    yield put(updateCartItemSuccess(response.data));
   } catch (error) {
-    yield put(updateCartItemFailure({ message: error.message }));
+    yield put(updateCartItemFailure(error.message));
   }
 }
 
 function* deleteCartItemSaga(action) {
   try {
-    const { userId, itemId } = action.payload;
-    yield call(axios.delete, `${BASE_URL}/${userId}/item/${itemId}`);
-    yield put(deleteCartItemSuccess(itemId)); // Dispatch itemId directly
+    yield call(
+      axios.delete,
+      `${BASE_URL}/cart/${action.payload.userId}/item/${action.payload.itemId}`,
+    );
+    yield put(deleteCartItemSuccess(action.payload.itemId));
   } catch (error) {
-    yield put(deleteCartItemFailure({ message: error.message }));
+    yield put(deleteCartItemFailure(error.message));
   }
 }
 
-function* buyItemsInCartSaga(action) {
-  try {
-    const { userId } = action.payload;
-    const response = yield call(axios.post, `${BASE_URL}/${userId}/buy`);
-    yield put(buyItemsInCartSuccess(response.data));
-  } catch (error) {
-    yield put(buyItemsInCartFailure({ message: error.message }));
-  }
+function* cartSaga() {
+  yield takeEvery(fetchCartRequest.type, fetchCart);
+  yield takeEvery(addItemToCartRequest.type, addCartItem);
+  yield takeEvery(updateCartItemRequest.type, updateCartItemSaga);
+  yield takeEvery(deleteCartItemRequest.type, deleteCartItemSaga);
 }
 
-export default function* cartSagas() {
-  yield takeEvery(fetchCart.type, fetchCartSaga);
-  yield takeEvery(addItemToCart.type, addItemToCartSaga);
-  yield takeEvery(updateCartItem.type, updateCartItemSaga);
-  yield takeEvery(deleteCartItem.type, deleteCartItemSaga);
-  yield takeEvery(buyItemsInCart.type, buyItemsInCartSaga);
-}
+export default cartSaga;

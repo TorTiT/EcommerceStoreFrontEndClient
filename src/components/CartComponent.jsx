@@ -6,53 +6,18 @@ import {
   addItemToCartRequest,
   updateCartItemRequest,
 } from "../redux/slices/cartSlice";
-import {
-  selectCartItemsWithDetails,
-  selectCartStatus,
-  selectCartError,
-} from "../redux/selectors/cartSelectors";
 import { toast } from "react-toastify";
 import { FaShoppingCart } from "react-icons/fa";
 import { useSpring, animated } from "@react-spring/web";
 
-// Define action types for the reducer
-const actionTypes = {
-  ADD_ITEM: "ADD_ITEM",
-  REMOVE_ITEM: "REMOVE_ITEM",
-  UPDATE_QUANTITY: "UPDATE_QUANTITY",
-  SET_ITEMS: "SET_ITEMS",
-};
-
-// Reducer function to manage cart state
-const cartReducer = (state, action) => {
-  switch (action.type) {
-    case actionTypes.ADD_ITEM:
-      return [...state, action.payload];
-    case actionTypes.REMOVE_ITEM:
-      return state.filter((item) => item._id !== action.payload);
-    case actionTypes.UPDATE_QUANTITY:
-      return state.map((item) =>
-        item._id === action.payload.itemId
-          ? { ...item, quantity: action.payload.quantity }
-          : item,
-      );
-    case actionTypes.SET_ITEMS:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-
 const CartComponent = () => {
   const [isOpen, setIsOpen] = useState(false); // State to manage if the cart is open
-  const cartItemsWithDetails = useSelector(selectCartItemsWithDetails) || [];
-  const status = useSelector(selectCartStatus);
-  const error = useSelector(selectCartError);
+  const cartItems = useSelector((state) => state.cart.items) || [];
+  const status = useSelector((state) => state.cart.status);
+  const error = useSelector((state) => state.cart.error);
   const dispatch = useDispatch();
   const cartRef = useRef(null);
   const buttonRef = useRef(null);
-
-  const [localCartItems, localDispatch] = useReducer(cartReducer, []); // Local reducer for cart items
 
   const userId = useSelector((state) => state.auth.user?.user?._id); // Get user ID from auth state
 
@@ -62,43 +27,29 @@ const CartComponent = () => {
     }
   }, [dispatch, userId]);
 
-  useEffect(() => {
-    localDispatch({
-      type: actionTypes.SET_ITEMS,
-      payload: cartItemsWithDetails,
-    });
-  }, [cartItemsWithDetails]);
-
   const toggleCart = (event) => {
     event.stopPropagation();
     setIsOpen(!isOpen); // Toggle cart open/close
   };
 
   const handleRemoveItem = (itemId) => {
-    localDispatch({ type: actionTypes.REMOVE_ITEM, payload: itemId }); // Optimistically remove item
     dispatch(deleteCartItemRequest({ userId, itemId }));
     toast.success("Item removed from cart");
   };
 
   const handleAddItem = (itemDetails) => {
-    const existingItem = localCartItems.find(
-      (item) => item.productId === itemDetails.productId,
+    const existingItem = cartItems.find(
+      (item) => item.product._id === itemDetails.product._id,
     );
     if (existingItem) {
       handleUpdateItemQuantity(existingItem._id, existingItem.quantity + 1);
     } else {
-      const newItem = { ...itemDetails, _id: Date.now().toString() }; // Temporary ID for new item
-      localDispatch({ type: actionTypes.ADD_ITEM, payload: newItem }); // Optimistically add item
       dispatch(addItemToCartRequest({ userId, itemDetails }));
       toast.success("Item added to cart");
     }
   };
 
   const handleUpdateItemQuantity = (itemId, quantity) => {
-    localDispatch({
-      type: actionTypes.UPDATE_QUANTITY,
-      payload: { itemId, quantity },
-    }); // Optimistically update item quantity
     if (quantity <= 0) {
       handleRemoveItem(itemId);
     } else {
@@ -148,21 +99,21 @@ const CartComponent = () => {
         <div className="h-full flex-col overflow-y-auto p-4">
           <h3 className="text-lg font-bold">Shopping Cart</h3>
           {error && <div className="text-red-500">{error}</div>}
-          {localCartItems.length === 0 ? (
+          {cartItems.length === 0 ? (
             <div>Your cart is empty</div>
           ) : (
-            localCartItems.map((item) => (
+            cartItems.map((item) => (
               <div key={item._id} className="mt-4 flex items-center">
-                {item.productDetails?.images?.[0] && (
+                {item.product?.images?.[0] && (
                   <img
-                    src={item.productDetails.images[0]}
-                    alt={item.productDetails.name}
+                    src={item.product.images[0]}
+                    alt={item.product.name}
                     className="h-16 w-16 rounded object-cover"
                   />
                 )}
                 <div className="ml-4">
                   <h4 className="font-bold">
-                    {item.productDetails?.name || "Unknown Product"}
+                    {item.product?.name || "Unknown Product"}
                   </h4>
                   <p>${item.price}</p>
                   <div className="mt-2 flex items-center">
@@ -196,7 +147,7 @@ const CartComponent = () => {
           )}
           <div className="mt-4 font-bold">
             Total: $
-            {localCartItems
+            {cartItems
               .reduce((total, item) => total + item.price * item.quantity, 0)
               .toFixed(2)}
           </div>

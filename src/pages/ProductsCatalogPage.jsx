@@ -31,14 +31,12 @@ const ProductsCatalogPage = () => {
 
   const [filter, setFilter] = useState({ title: "", category: "", price: "" });
 
-  // Fetch data only once when the component mounts
   useEffect(() => {
     dispatch(fetchAllProducts());
     dispatch(fetchAllCategories());
     dispatch(fetchDealsRequest());
   }, [dispatch]);
 
-  // Fetch the cart only if the user is logged in
   useEffect(() => {
     if (userId) {
       dispatch(fetchCartRequest(userId));
@@ -68,6 +66,7 @@ const ProductsCatalogPage = () => {
     } else {
       const itemDetails = {
         product: product._id,
+        productDetails: product, // Include product details
         quantity: 1,
         size: product.size[0], // Assuming default size
         color: product.color, // Assuming default color

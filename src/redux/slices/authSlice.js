@@ -5,7 +5,7 @@ import {
   REGISTER_REQUEST,
   REGISTER_SUCCESS,
   REGISTER_FAILURE,
-  LOGOUT, // Import the logout action type
+  LOGOUT,
 } from "../actions/authActions";
 
 const initialState = {

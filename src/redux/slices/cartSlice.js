@@ -27,9 +27,19 @@ const cartSlice = createSlice({
     addItemToCartRequest(state) {
       state.status = "loading";
     },
-    addItemToCartSuccess(state, action) {
+    addItemToCartSuccess: (state, action) => {
       state.status = "succeeded";
-      state.items.push(action.payload);
+      const existingItemIndex = state.items.findIndex(
+        (item) =>
+          item.product._id === action.payload.product._id &&
+          item.size === action.payload.size &&
+          item.color === action.payload.color,
+      );
+      if (existingItemIndex !== -1) {
+        state.items[existingItemIndex].quantity += action.payload.quantity;
+      } else {
+        state.items.push(action.payload);
+      }
     },
     addItemToCartFailure(state, action) {
       state.status = "failed";

@@ -21,6 +21,7 @@ const ProductCard = ({ product, dealPrice }) => {
           quantity: 1,
           size: product.size[0], // Assuming the first size is selected
           color: product.color, // Assuming color is directly available
+          productDetails: product, // Add full product details
         },
       }),
     );

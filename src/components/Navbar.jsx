@@ -24,27 +24,31 @@ const Navbar = () => {
           <Link to="/" className="hover:underline">
             Home
           </Link>
-          <Link to="/category" className="hover:underline">
-            Categories Page
-          </Link>
-          <Link to="/customers" className="hover:underline">
-            Customers Page
-          </Link>
           <Link to="/cart" className="hover:underline">
             Cart Page
           </Link>
           <Link to="/catalog" className="hover:underline">
             Products Catalog
           </Link>
-          <Link to="/statistics" className="hover:underline">
-            Statistics Page
-          </Link>
-          <Link to="/adminproduct" className="hover:underline">
-            Admin Products Catalog
-          </Link>
-          <Link to="/deals" className="hover:underline">
-            Admin Deals Page
-          </Link>
+          {user?.user?.role === "admin" && (
+            <>
+              <Link to="/category" className="hover:underline">
+                Categories Page
+              </Link>
+              <Link to="/customers" className="hover:underline">
+                Customers Page
+              </Link>
+              <Link to="/statistics" className="hover:underline">
+                Statistics Page
+              </Link>
+              <Link to="/adminproduct" className="hover:underline">
+                Admin Products Catalog
+              </Link>
+              <Link to="/deals" className="hover:underline">
+                Admin Deals Page
+              </Link>
+            </>
+          )}
         </animated.div>
         <div className="flex items-center space-x-4">
           {user ? (

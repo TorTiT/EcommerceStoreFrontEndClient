@@ -29,16 +29,32 @@ function* fetchCart(action) {
   }
 }
 
-function* addCartItem(action) {
+function* addItemToCartSaga(action) {
   try {
+    console.log(
+      "Sending add item to cart request to server with:",
+      action.payload,
+    );
     const response = yield call(
       axios.post,
-      `${BASE_URL}/cart/${action.payload.userId}/item`,
+      `http://localhost:8000/cart/${action.payload.userId}/item`,
       action.payload.itemDetails,
+    );
+    console.log(
+      "Add item to cart request successful. Response:",
+      response.data,
     );
     yield put(addItemToCartSuccess(response.data));
   } catch (error) {
-    yield put(addItemToCartFailure(error.message));
+    console.error(
+      "Add item to cart request failed. Error:",
+      error.response?.data?.message || error.message,
+    );
+    yield put(
+      addItemToCartFailure(
+        error.response?.data?.message || "Add to cart failed",
+      ),
+    );
   }
 }
 
@@ -69,7 +85,7 @@ function* deleteCartItemSaga(action) {
 
 function* cartSaga() {
   yield takeEvery(fetchCartRequest.type, fetchCart);
-  yield takeEvery(addItemToCartRequest.type, addCartItem);
+  yield takeEvery(addItemToCartRequest.type, addItemToCartSaga);
   yield takeEvery(updateCartItemRequest.type, updateCartItemSaga);
   yield takeEvery(deleteCartItemRequest.type, deleteCartItemSaga);
 }

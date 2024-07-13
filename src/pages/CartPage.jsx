@@ -11,6 +11,7 @@ import {
   selectCartError,
 } from "../redux/selectors/cartSelectors";
 import { fetchAllProducts } from "../redux/slices/productsSlice";
+import { fetchDealsRequest } from "../redux/slices/dealsSlice";
 
 const localActions = {
   SET_ITEMS: "SET_ITEMS",
@@ -46,11 +47,13 @@ const localReducer = (state, action) => {
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.auth.user?.user?._id); // Get user ID from auth state
+  const userId = useSelector((state) => state.auth.user?.user?._id);
+  const { deals } = useSelector((state) => state.deals);
 
   const cartItemsWithDetails = useSelector(selectCartItemsWithDetails) || [];
   const status = useSelector(selectCartStatus);
   const error = useSelector(selectCartError);
+  const categories = useSelector((state) => state.categories.categories);
 
   const [{ items: localItems, error: localError }, localDispatch] = useReducer(
     localReducer,
@@ -60,23 +63,27 @@ const CartPage = () => {
     },
   );
 
-  // Fetch products and cart data when the component mounts
   useEffect(() => {
     dispatch(fetchAllProducts());
+    dispatch(fetchDealsRequest());
     if (userId) {
       dispatch(fetchCartRequest(userId));
     }
   }, [dispatch, userId]);
 
-  // Update local state when cart items with details are fetched
   useEffect(() => {
     if (cartItemsWithDetails.length > 0) {
       localDispatch({
         type: localActions.SET_ITEMS,
-        payload: cartItemsWithDetails,
+        payload: cartItemsWithDetails.map((item) => {
+          const deal = deals.find(
+            (deal) => deal.product._id === item.product._id,
+          );
+          return deal ? { ...item, dealPrice: deal.dealPrice } : item;
+        }),
       });
     }
-  }, [cartItemsWithDetails]);
+  }, [cartItemsWithDetails, deals]);
 
   const handleRemoveItem = useCallback(
     (itemId) => {
@@ -121,7 +128,10 @@ const CartPage = () => {
 
   const total = useMemo(() => {
     return localItems
-      .reduce((acc, item) => acc + item.price * item.quantity, 0)
+      .reduce(
+        (acc, item) => acc + (item.dealPrice || item.price) * item.quantity,
+        0,
+      )
       .toFixed(2);
   }, [localItems]);
 
@@ -132,7 +142,6 @@ const CartPage = () => {
     return <div>Error: {errorMessage}</div>;
   }
 
-  // Filter out items without complete productDetails
   const validLocalItems = localItems.filter(
     (item) => item.productDetails && Object.keys(item.productDetails).length,
   );
@@ -149,7 +158,7 @@ const CartPage = () => {
             {validLocalItems.map((item) => (
               <div
                 key={item._id}
-                className="cart-item flex items-center justify-between rounded bg-white p-4 shadow-md"
+                className="cart-item flex flex-col items-center justify-between rounded bg-white p-4 shadow-md md:flex-row"
               >
                 {item.productDetails.images?.[0] && (
                   <img
@@ -163,7 +172,36 @@ const CartPage = () => {
                     <span className="text-lg font-semibold">
                       {item.productDetails.name}
                     </span>
-                    <span className="block text-gray-500">${item.price}</span>
+                    <div>
+                      {item.dealPrice ? (
+                        <>
+                          <span className="text-lg font-bold text-red-500">
+                            ${item.dealPrice}
+                          </span>
+                          <span className="ml-2 text-sm line-through">
+                            ${item.productDetails.price}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="block text-gray-500">
+                          ${item.productDetails.price}
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-2 text-sm text-gray-700">
+                      <span>Size: {item.size}</span>
+                      <br />
+                      <span>Color: {item.color}</span>
+                      <br />
+                      <span>
+                        Category:{" "}
+                        {
+                          categories.find(
+                            (cat) => cat._id === item.productDetails.category,
+                          )?.name
+                        }
+                      </span>
+                    </div>
                     <div className="quantity-controls mt-2 flex items-center">
                       <button
                         className="mr-2 rounded bg-blue-500 px-2 py-1 text-white"
@@ -185,11 +223,14 @@ const CartPage = () => {
                     </div>
                   </div>
                   <div className="total-price text-lg font-semibold">
-                    Total: ${(item.price * item.quantity).toFixed(2)}
+                    Total: $
+                    {((item.dealPrice || item.price) * item.quantity).toFixed(
+                      2,
+                    )}
                   </div>
                 </div>
                 <button
-                  className="remove-item ml-4 rounded bg-red-500 px-3 py-1 text-white"
+                  className="remove-item mt-2 rounded bg-red-500 px-3 py-1 text-white md:ml-4 md:mt-0"
                   onClick={() => handleRemoveItem(item._id)}
                 >
                   Remove

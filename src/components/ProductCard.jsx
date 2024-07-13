@@ -1,40 +1,47 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addItemToCartRequest } from "../redux/slices/cartSlice";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const ProductCard = ({ product, dealPrice }) => {
-  const dispatch = useDispatch();
-  const userId = useSelector((state) => state.auth.user?.user?._id);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const handleAddToCart = () => {
-    if (!userId) {
-      alert("Please log in to add items to your cart");
-      return;
-    }
+  const handlePreviousImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? product.images.length - 1 : prevIndex - 1,
+    );
+  };
 
-    dispatch(
-      addItemToCartRequest({
-        userId,
-        itemDetails: {
-          productId: product._id,
-          price: dealPrice || product.price,
-          quantity: 1,
-          size: product.size[0], // Assuming the first size is selected
-          color: product.color, // Assuming color is directly available
-          productDetails: product, // Add full product details
-        },
-      }),
+  const handleNextImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === product.images.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
   return (
     <div className="rounded border p-4 shadow">
-      <img
-        src={product.images[0]}
-        alt={product.name}
-        className="h-48 w-full object-cover"
-      />
-      <h2 className="text-xl font-bold">{product.name}</h2>
+      <div className="relative">
+        <img
+          src={product.images[currentImageIndex]}
+          alt={product.name}
+          className="h-48 w-full object-cover"
+        />
+        {product.images.length > 1 && (
+          <>
+            <button
+              onClick={handlePreviousImage}
+              className="absolute left-0 top-1/2 -translate-y-1/2 transform bg-gray-800 px-2 py-1 text-white"
+            >
+              &lt;
+            </button>
+            <button
+              onClick={handleNextImage}
+              className="absolute right-0 top-1/2 -translate-y-1/2 transform bg-gray-800 px-2 py-1 text-white"
+            >
+              &gt;
+            </button>
+          </>
+        )}
+      </div>
+      <h2 className="mt-2 text-xl font-bold">{product.name}</h2>
       <p>{product.description}</p>
       {dealPrice ? (
         <div>
@@ -44,12 +51,12 @@ const ProductCard = ({ product, dealPrice }) => {
       ) : (
         <p className="text-lg font-bold">${product.price}</p>
       )}
-      <button
-        onClick={handleAddToCart}
-        className="mt-2 rounded bg-blue-500 px-4 py-2 text-white"
+      <Link
+        to={`/product/${product._id}`}
+        className="mt-2 block rounded bg-blue-500 px-4 py-2 text-center text-white"
       >
-        Add to Cart
-      </button>
+        View Details
+      </Link>
     </div>
   );
 };

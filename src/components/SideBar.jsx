@@ -16,7 +16,7 @@ const Sidebar = () => {
       <h2 className="mb-4 text-xl font-bold">Categories</h2>
       <ul>
         <li className="mb-2">
-          <FaTshirt className="mr-2 inline" /> Traditional Wear
+          <FaTshirt className="mr-2 inline" /> Shirts
         </li>
         <li className="mb-2">
           <FaTshirt className="mr-2 inline" /> Western Wear

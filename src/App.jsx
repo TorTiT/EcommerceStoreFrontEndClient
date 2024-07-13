@@ -20,6 +20,7 @@ import StatisticsPage from "./pages/StatisticsPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CustomersPage from "./pages/CustomersPage";
+import ProductPage from "./pages/ProductPage";
 
 // Components
 import CartComponent from "./components/CartComponent";
@@ -64,6 +65,7 @@ const App = () => {
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
                 <Route path="catalog" element={<ProductsCatalogPage />} />
+                <Route path="/product/:productId" element={<ProductPage />} />
                 <Route path="cart" element={<CartPage />} />
                 <Route path="adminproduct" element={<AdminProductsPage />} />
                 <Route path="statistics" element={<StatisticsPage />} />

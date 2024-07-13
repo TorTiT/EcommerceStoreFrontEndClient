@@ -12,9 +12,13 @@ import ProductCard from "../components/ProductCard";
 import Recommendations from "../components/Recommendations";
 import { useTransition, animated } from "@react-spring/web";
 import { toast } from "react-toastify";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const ProductsCatalogPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const {
     products,
     status: productsStatus,
@@ -29,7 +33,11 @@ const ProductsCatalogPage = () => {
   const userId = useSelector((state) => state.auth.user?.user?._id);
   const cartItems = useSelector((state) => state.cart.items);
 
-  const [filter, setFilter] = useState({ title: "", category: "", price: "" });
+  const [filter, setFilter] = useState({
+    title: "",
+    category: "", // Initialize category as empty string
+    price: "",
+  });
 
   // Fetch data only once when the component mounts
   useEffect(() => {
@@ -45,8 +53,20 @@ const ProductsCatalogPage = () => {
     }
   }, [dispatch, userId]);
 
+  // Update filter state and URL params on filter change
   const handleFilterChange = (e) => {
-    setFilter({ ...filter, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFilter((prevFilter) => ({ ...prevFilter, [name]: value }));
+
+    if (name === "category") {
+      // Find the category object that matches the selected ID
+      const selectedCategory = categories.find((cat) => cat._id === value);
+      if (selectedCategory) {
+        setSearchParams({ category: selectedCategory.name });
+      } else {
+        setSearchParams({ category: value }); // Fallback to ID if name is not found
+      }
+    }
   };
 
   const handlePurchase = (product) => {

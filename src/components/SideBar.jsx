@@ -9,45 +9,46 @@ import {
   FaClock,
   FaTags,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
+  const categories = [
+    { name: "Traditional Wear", icon: FaTshirt, id: "traditional-wear" },
+    { name: "Western Wear", icon: FaTshirt, id: "western-wear" },
+    { name: "Swim & Beachwear", icon: FaSwimmer, id: "swim-beachwear" },
+    {
+      name: "Winter & Seasonal Wear",
+      icon: FaSkiing,
+      id: "winter-seasonal-wear",
+    },
+    { name: "Beauty & Grooming", icon: FaMobileAlt, id: "beauty-grooming" },
+    { name: "Jewellery", icon: FaGem, id: "jewellery" },
+    {
+      name: "Personal Care Appliances",
+      icon: FaMobileAlt,
+      id: "personal-care-appliances",
+    },
+    { name: "International Brands", icon: FaTags, id: "international-brands" },
+    { name: "Foot Wear", icon: FaShoePrints, id: "foot-wear" },
+    { name: "Watches", icon: FaClock, id: "watches" },
+    { name: "Accessories", icon: FaTags, id: "accessories" },
+    { name: "Shirts", icon: FaTshirt, id: "Shirts" },
+  ];
+
   return (
     <div className="min-h-screen w-64 bg-gray-200 p-4">
       <h2 className="mb-4 text-xl font-bold">Categories</h2>
       <ul>
-        <li className="mb-2">
-          <FaTshirt className="mr-2 inline" /> Traditional Wear
-        </li>
-        <li className="mb-2">
-          <FaTshirt className="mr-2 inline" /> Western Wear
-        </li>
-        <li className="mb-2">
-          <FaSwimmer className="mr-2 inline" /> Swim & Beachwear
-        </li>
-        <li className="mb-2">
-          <FaSkiing className="mr-2 inline" /> Winter & Seasonal Wear
-        </li>
-        <li className="mb-2">
-          <FaMobileAlt className="mr-2 inline" /> Beauty & Grooming
-        </li>
-        <li className="mb-2">
-          <FaGem className="mr-2 inline" /> Jewellery
-        </li>
-        <li className="mb-2">
-          <FaMobileAlt className="mr-2 inline" /> Personal Care Appliances
-        </li>
-        <li className="mb-2">
-          <FaTags className="mr-2 inline" /> International Brands
-        </li>
-        <li className="mb-2">
-          <FaShoePrints className="mr-2 inline" /> Foot Wear
-        </li>
-        <li className="mb-2">
-          <FaClock className="mr-2 inline" /> Watches
-        </li>
-        <li className="mb-2">
-          <FaTags className="mr-2 inline" /> Accessories
-        </li>
+        {categories.map((category) => (
+          <li key={category.id} className="mb-2">
+            <Link
+              to={`/catalog?category=${category.id}`}
+              className="flex items-center"
+            >
+              <category.icon className="mr-2 inline" /> {category.name}
+            </Link>
+          </li>
+        ))}
       </ul>
     </div>
   );

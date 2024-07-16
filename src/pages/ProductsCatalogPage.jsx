@@ -12,9 +12,12 @@ import ProductCard from "../components/ProductCard";
 import Recommendations from "../components/Recommendations";
 import { useTransition, animated } from "@react-spring/web";
 import { toast } from "react-toastify";
+import { useSearchParams } from "react-router-dom";
 
 const ProductsCatalogPage = () => {
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+
   const {
     products,
     status: productsStatus,
@@ -29,7 +32,12 @@ const ProductsCatalogPage = () => {
   const userId = useSelector((state) => state.auth.user?.user?._id);
   const cartItems = useSelector((state) => state.cart.items);
 
-  const [filter, setFilter] = useState({ title: "", category: "", price: "" });
+  const initialCategory = searchParams.get("category") || "";
+  const [filter, setFilter] = useState({
+    title: "",
+    category: initialCategory,
+    price: "",
+  });
 
   useEffect(() => {
     dispatch(fetchAllProducts());
@@ -43,8 +51,19 @@ const ProductsCatalogPage = () => {
     }
   }, [dispatch, userId]);
 
+  useEffect(() => {
+    const categoryFromParams = searchParams.get("category");
+    if (categoryFromParams) {
+      setFilter((prevFilter) => ({
+        ...prevFilter,
+        category: categoryFromParams,
+      }));
+    }
+  }, [searchParams]);
+
   const handleFilterChange = (e) => {
-    setFilter({ ...filter, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFilter((prevFilter) => ({ ...prevFilter, [name]: value }));
   };
 
   const handlePurchase = (product) => {
@@ -66,11 +85,10 @@ const ProductsCatalogPage = () => {
     } else {
       const itemDetails = {
         product: product._id,
-        productDetails: product, // Include product details
         quantity: 1,
-        size: product.size[0], // Assuming default size
-        color: product.color, // Assuming default color
-        price: product.dealPrice || product.price, // Use deal price if available
+        size: product.size[0],
+        color: product.color,
+        price: product.dealPrice || product.price,
       };
       dispatch(addItemToCartRequest({ userId, itemDetails }));
     }
@@ -149,7 +167,7 @@ const ProductsCatalogPage = () => {
                     <ProductCard
                       product={product}
                       onPurchase={() => handlePurchase(product)}
-                      dealPrice={product.dealPrice} // Pass the deal price to ProductCard
+                      dealPrice={product.dealPrice}
                     />
                   </animated.div>
                 ))

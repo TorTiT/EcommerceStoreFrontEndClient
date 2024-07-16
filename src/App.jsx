@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import socket from "./redux/ws/websocket";
+import socket from "./redux/WS/websocket";
 import { fetchAllProducts } from "./redux/slices/productsSlice";
 import { fetchAllCategories } from "./redux/slices/categorySlice";
 import { fetchDealsRequest } from "./redux/slices/dealsSlice";

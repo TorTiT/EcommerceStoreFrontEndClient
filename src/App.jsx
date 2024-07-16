@@ -24,9 +24,9 @@ import ProductPage from "./pages/ProductPage";
 
 // Components
 import CartComponent from "./components/CartComponent";
-import Layout from "./components/Layout";
-import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
 import Sidebar from "./components/SideBar";
+import Footer from "./components/Footer";
 import MainContent from "./components/MainContent";
 
 const App = () => {
@@ -55,26 +55,25 @@ const App = () => {
     <Router>
       <div className="flex min-h-screen flex-col">
         <CartComponent />
-        <main className="flex flex-grow">
+        <Navbar />
+        <div className="flex flex-grow">
           <Sidebar />
-          <div className="flex-grow">
+          <div className="flex-grow p-4">
             <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<MainContent />} />
-                <Route path="category" element={<CategoriesPage />} />
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
-                <Route path="catalog" element={<ProductsCatalogPage />} />
-                <Route path="/product/:productId" element={<ProductPage />} />
-                <Route path="cart" element={<CartPage />} />
-                <Route path="adminproduct" element={<AdminProductsPage />} />
-                <Route path="statistics" element={<StatisticsPage />} />
-                <Route path="customers" element={<CustomersPage />} />
-                <Route path="deals" element={<AdminDealsPage />} />
-              </Route>
+              <Route path="/" element={<MainContent />} />
+              <Route path="category" element={<CategoriesPage />} />
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
+              <Route path="catalog" element={<ProductsCatalogPage />} />
+              <Route path="/product/:productId" element={<ProductPage />} />
+              <Route path="cart" element={<CartPage />} />
+              <Route path="adminproduct" element={<AdminProductsPage />} />
+              <Route path="statistics" element={<StatisticsPage />} />
+              <Route path="customers" element={<CustomersPage />} />
+              <Route path="deals" element={<AdminDealsPage />} />
             </Routes>
           </div>
-        </main>
+        </div>
         <Footer />
         <ToastContainer />
       </div>

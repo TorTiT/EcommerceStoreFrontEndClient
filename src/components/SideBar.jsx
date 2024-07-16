@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import {
   FaTshirt,
   FaSwimmer,
@@ -10,63 +11,81 @@ import {
   FaTags,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const iconMap = {
+  "Traditional Wear": FaTshirt,
+  "Western Wear": FaTshirt,
+  "Swim & Beachwear": FaSwimmer,
+  "Winter & Seasonal Wear": FaSkiing,
+  "Beauty & Grooming": FaMobileAlt,
+  Jewellery: FaGem,
+  "Personal Care Appliances": FaMobileAlt,
+  "International Brands": FaTags,
+  "Foot Wear": FaShoePrints,
+  Watches: FaClock,
+  Accessories: FaTags,
+  Shirts: FaTshirt,
+};
 
 const Sidebar = () => {
-  const categories = [
-    {
-      name: "Traditional Wear",
-      icon: FaTshirt,
-      id: "66929a5aad47e2002b1ef7aa",
+  const categories = useSelector((state) => state.categories.categories);
+
+  const sidebarVariants = {
+    hidden: { opacity: 0, x: -100 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 20,
+      },
     },
-    { name: "Western Wear", icon: FaTshirt, id: "66929a66ad47e2002b1ef7ac" },
-    {
-      name: "Swim & Beachwear",
-      icon: FaSwimmer,
-      id: "66929a7ead47e2002b1ef7ae",
-    },
-    {
-      name: "Winter & Seasonal Wear",
-      icon: FaSkiing,
-      id: "66929a93ad47e2002b1ef7b0",
-    },
-    {
-      name: "Beauty & Grooming",
-      icon: FaMobileAlt,
-      id: "66929aaead47e2002b1ef7b2",
-    },
-    { name: "Jewellery", icon: FaGem, id: "66929abbad47e2002b1ef7b4" },
-    {
-      name: "Personal Care Appliances",
-      icon: FaMobileAlt,
-      id: "66929ad3ad47e2002b1ef7b6",
-    },
-    {
-      name: "International Brands",
-      icon: FaTags,
-      id: "668e7a8710e2b9c70e4f3926",
-    },
-    { name: "Foot Wear", icon: FaShoePrints, id: "66929b22ad47e2002b1ef7c8" },
-    { name: "Watches", icon: FaClock, id: "66929b2bad47e2002b1ef7ca" },
-    { name: "Accessories", icon: FaTags, id: "66929b3aad47e2002b1ef7cc" },
-    { name: "Shirts", icon: FaTshirt, id: "66409ac6e35e273e6ce82632" },
-  ];
+  };
+
+  const linkVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: (index) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: index * 0.1,
+      },
+    }),
+  };
 
   return (
-    <div className="min-h-screen w-64 bg-gray-200 p-4">
-      <h2 className="mb-4 text-xl font-bold">Categories</h2>
+    <motion.div
+      className="min-h-screen w-64 bg-gray-800 p-4 text-white"
+      initial="hidden"
+      animate="visible"
+      variants={sidebarVariants}
+    >
+      <h2 className="mb-4 text-xl font-bold text-white">Categories</h2>
       <ul>
-        {categories.map((category) => (
-          <li key={category.id} className="mb-2">
-            <Link
-              to={`/catalog?category=${category.id}`}
-              className="flex items-center"
+        {categories.map((category, index) => {
+          const Icon = iconMap[category.name] || FaTags;
+          return (
+            <motion.li
+              key={category._id}
+              className="mb-2"
+              custom={index}
+              initial="hidden"
+              animate="visible"
+              variants={linkVariants}
             >
-              <category.icon className="mr-2 inline" /> {category.name}
-            </Link>
-          </li>
-        ))}
+              <Link
+                to={`/catalog?category=${category._id}`}
+                className="flex items-center rounded px-3 py-2 hover:bg-gray-700"
+              >
+                <Icon className="mr-2 inline" /> {category.name}
+              </Link>
+            </motion.li>
+          );
+        })}
       </ul>
-    </div>
+    </motion.div>
   );
 };
 

@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="mt-10 bg-gray-800 py-6 text-white">
+    <footer className="mt-0 bg-gray-800 py-4 text-white">
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap items-center justify-between">
           <div className="mb-4 w-full text-center sm:mb-0 sm:w-1/3 sm:text-left">
@@ -61,7 +61,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <div className="mt-6 border-t border-gray-700 pt-4 text-center">
+        <div className="mt-4 border-t border-gray-700 pt-4 text-center">
           <p>
             &copy; {new Date().getFullYear()} Shoe Store. All rights reserved.
           </p>

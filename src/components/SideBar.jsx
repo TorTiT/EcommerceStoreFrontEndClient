@@ -57,7 +57,7 @@ const Sidebar = () => {
 
   return (
     <motion.div
-      className="min-h-screen w-64 bg-gray-800 p-4 text-white"
+      className="h-100 w-64 bg-gray-800 p-4 text-white"
       initial="hidden"
       animate="visible"
       variants={sidebarVariants}

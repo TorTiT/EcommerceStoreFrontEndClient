@@ -1,11 +1,15 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRecommendations } from "../redux/slices/recommendationsSlice";
+import Slider from "react-slick";
+import { fetchRecommendations } from "../../redux/slices/recommendationsSlice";
 import {
   selectRecommendations,
   selectRecommendationsStatus,
   selectRecommendationsError,
-} from "../redux/selectors/recommendationsSelectors";
+} from "../../redux/selectors/recommendationsSelectors";
+import ProductCard from "../ProductCard";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const Recommendations = ({ userId, triggerUpdate }) => {
   const dispatch = useDispatch();
@@ -19,6 +23,34 @@ const Recommendations = ({ userId, triggerUpdate }) => {
     }
   }, [dispatch, userId, triggerUpdate]);
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true,
+        },
+      },
+    ],
+  };
+
   if (status === "loading") return <div>Loading...</div>;
   if (status === "failed")
     return (
@@ -28,32 +60,18 @@ const Recommendations = ({ userId, triggerUpdate }) => {
     );
 
   return (
-    <div className="recommendations rounded bg-white p-4 shadow">
+    <div className="recommendations rounded bg-white p-4 shadow-md">
       <h2 className="mb-4 text-xl font-bold">Recommended Products</h2>
       {recommendations.length === 0 ? (
         <p>No recommendations available.</p>
       ) : (
-        <ul className="space-y-4">
+        <Slider {...settings}>
           {recommendations.map((product) => (
-            <li
-              key={product._id}
-              className="flex items-center rounded bg-gray-100 p-4 shadow"
-            >
-              {product.images?.[0] && (
-                <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  className="mr-4 h-16 w-16 object-cover"
-                />
-              )}
-              <div>
-                <h3 className="text-lg font-semibold">{product.name}</h3>
-                <p>{product.description}</p>
-                <p className="font-bold">${product.price}</p>
-              </div>
-            </li>
+            <div key={product._id} className="p-2">
+              <ProductCard product={product} showDescription={false} />
+            </div>
           ))}
-        </ul>
+        </Slider>
       )}
     </div>
   );

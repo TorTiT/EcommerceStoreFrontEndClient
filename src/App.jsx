@@ -23,11 +23,10 @@ import CustomersPage from "./pages/CustomersPage";
 import ProductPage from "./pages/ProductPage";
 
 // Components
-import CartComponent from "./components/CartComponent";
-import Navbar from "./components/Navbar";
-import Sidebar from "./components/SideBar";
-import Footer from "./components/Footer";
-import MainContent from "./components/MainContent";
+import CartComponent from "./components/mainContent/CartComponent";
+import Navbar from "./components/mainContent/Navbar";
+import Footer from "./components/mainContent/Footer";
+import MainContent from "./components/mainContent/MainContent";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -57,7 +56,6 @@ const App = () => {
         <CartComponent />
         <Navbar />
         <div className="flex flex-grow">
-          <Sidebar />
           <div className="flex-grow p-4">
             <Routes>
               <Route path="/" element={<MainContent />} />

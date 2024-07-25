@@ -5,7 +5,7 @@ import {
   deleteCartItemRequest,
   addItemToCartRequest,
   updateCartItemRequest,
-} from "../redux/slices/cartSlice";
+} from "../../redux/slices/cartSlice";
 import { toast } from "react-toastify";
 import { FaShoppingCart } from "react-icons/fa";
 import { useSpring, animated } from "@react-spring/web";

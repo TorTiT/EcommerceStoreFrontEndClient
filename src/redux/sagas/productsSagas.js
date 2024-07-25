@@ -1,3 +1,5 @@
+// src/redux/sagas/productsSagas.js
+
 import { call, put, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import {
@@ -16,6 +18,9 @@ import {
   uploadProduct,
   uploadProductSuccess,
   uploadProductFailure,
+  uploadMultipleProducts,
+  uploadMultipleProductsSuccess,
+  uploadMultipleProductsFailure,
 } from "../slices/productsSlice";
 
 const BASE_URL = "http://localhost:8000/products";
@@ -69,10 +74,21 @@ function* uploadProductSaga(action) {
   }
 }
 
+function* uploadMultipleProductsSaga(action) {
+  try {
+    const productsData = action.payload;
+    const response = yield call(axios.post, `${BASE_URL}/bulk`, productsData);
+    yield put(uploadMultipleProductsSuccess(response.data));
+  } catch (error) {
+    yield put(uploadMultipleProductsFailure(error.response.data));
+  }
+}
+
 export default function* productSagas() {
   yield takeEvery(fetchAllProducts.type, fetchAllProductsSaga);
   yield takeEvery(fetchProductById.type, fetchProductByIdSaga);
   yield takeEvery(updateProduct.type, updateProductSaga);
   yield takeEvery(deleteProduct.type, deleteProductSaga);
   yield takeEvery(uploadProduct.type, uploadProductSaga);
+  yield takeEvery(uploadMultipleProducts.type, uploadMultipleProductsSaga);
 }

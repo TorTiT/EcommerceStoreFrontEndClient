@@ -17,7 +17,7 @@ const ProductCard = ({ product, dealPrice }) => {
   };
 
   return (
-    <div className="rounded border p-4 shadow">
+    <div className="relative rounded border bg-white p-4 shadow-lg">
       <div className="relative">
         <img
           src={product.images[currentImageIndex]}

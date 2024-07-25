@@ -1,9 +1,12 @@
+// src/redux/slices/productsSlice.js
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   products: [],
   status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null,
+  searchQuery: "",
 };
 
 // Products slice
@@ -78,6 +81,20 @@ const productsSlice = createSlice({
       state.status = "failed";
       state.error = action.payload;
     },
+    uploadMultipleProducts(state) {
+      state.status = "loading";
+    },
+    uploadMultipleProductsSuccess(state, action) {
+      state.status = "succeeded";
+      state.products = [...state.products, ...action.payload];
+    },
+    uploadMultipleProductsFailure(state, action) {
+      state.status = "failed";
+      state.error = action.payload;
+    },
+    setSearchQuery(state, action) {
+      state.searchQuery = action.payload;
+    },
   },
 });
 
@@ -97,6 +114,10 @@ export const {
   uploadProduct,
   uploadProductSuccess,
   uploadProductFailure,
+  uploadMultipleProducts,
+  uploadMultipleProductsSuccess,
+  uploadMultipleProductsFailure,
+  setSearchQuery,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import SearchBar from "./SearchBar";
 import SidebarButton from "./SideBar";
+import LogoutButton from "./LogoutButton";
 
 const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
@@ -65,9 +66,7 @@ const Navbar = () => {
           {user ? (
             <>
               <span>Welcome, {user.userName}</span>
-              <Link to="/logout" className="hover:underline">
-                Logout
-              </Link>
+              <LogoutButton /> {/* Add the LogoutButton component here */}
             </>
           ) : (
             <Link to="/login" className="hover:underline">

@@ -33,13 +33,18 @@ const SidebarButton = () => {
   const categories = useSelector((state) => state.categories.categories);
   const [isExpanded, setIsExpanded] = useState(false);
   const menuRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const toggleCategories = () => {
     setIsExpanded((prev) => !prev);
   };
 
   const handleClickOutside = (event) => {
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
+    if (
+      menuRef.current &&
+      !menuRef.current.contains(event.target) &&
+      !buttonRef.current.contains(event.target)
+    ) {
       setIsExpanded(false);
     }
   };
@@ -59,8 +64,9 @@ const SidebarButton = () => {
   return (
     <div className="relative">
       <button
+        ref={buttonRef}
         onClick={toggleCategories}
-        className="z-50 flex items-center justify-center rounded-full bg-white shadow-lg"
+        className="z-50 flex items-center justify-center rounded-full bg-gray-800 text-white shadow-lg"
         style={{ width: "40px", height: "40px" }}
       >
         <FontAwesomeIcon icon={faChevronDown} />
@@ -72,7 +78,7 @@ const SidebarButton = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="absolute left-0 top-12 z-40 overflow-hidden rounded-lg bg-white shadow-lg"
+            className="absolute left-0 top-16 z-40 overflow-hidden rounded-lg bg-white shadow-lg"
           >
             {categories.map((category, index) => {
               const Icon = iconMap[category.name] || FaTags;

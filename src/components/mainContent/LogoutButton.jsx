@@ -12,7 +12,10 @@ const LogoutButton = () => {
   };
 
   return (
-    <button onClick={handleLogout} className="rounded p-2 text-white">
+    <button
+      onClick={handleLogout}
+      className="transform rounded border-l-indigo-800  p-2 text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-800"
+    >
       Logout
     </button>
   );

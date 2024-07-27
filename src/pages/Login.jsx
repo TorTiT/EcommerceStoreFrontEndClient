@@ -23,13 +23,13 @@ function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md">
-        <h2 className="text-center text-2xl font-bold text-gray-800">Login</h2>
+      <div className="w-full max-w-md space-y-6 rounded-lg bg-slate-800 p-8 shadow-md">
+        <h2 className="text-center text-2xl font-bold text-slate-100">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <label
               htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-slate-100"
             >
               Username
             </label>
@@ -45,7 +45,7 @@ function Login() {
           <div className="space-y-2">
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-slate-100"
             >
               Password
             </label>
@@ -67,7 +67,7 @@ function Login() {
           </button>
           {error && <p className="text-sm text-red-500">{error}</p>}
         </form>
-        <p className="text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-slate-100">
           New user?{" "}
           <a
             href="#"

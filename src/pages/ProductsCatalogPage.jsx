@@ -9,8 +9,7 @@ import {
   updateCartItemRequest,
 } from "../redux/slices/cartSlice";
 import ProductCard from "../components/ProductCard";
-import Recommendations from "../components/mainContent/Recommendations";
-import CatalogRecommendations from "../components/mainContent/CatalogRecommendations"; // Import the new component
+import CatalogRecommendations from "../components/mainContent/CatalogRecommendations";
 import { useTransition, animated } from "@react-spring/web";
 import { toast } from "react-toastify";
 import { useSearchParams } from "react-router-dom";
@@ -169,7 +168,7 @@ const ProductsCatalogPage = () => {
                       product={product}
                       onPurchase={() => handlePurchase(product)}
                       dealPrice={product.dealPrice}
-                      showDescription={false} // Hide descriptions on the catalog page
+                      showDescription={false}
                     />
                   </animated.div>
                 ))
@@ -177,13 +176,9 @@ const ProductsCatalogPage = () => {
             </div>
           )}
         </div>
-        {/* <div className="pt-4 lg:w-1/4 lg:pl-4 lg:pt-0">
-          <Recommendations userId={userId} />
-        </div> */}
       </div>
       <div className="container mx-auto pt-6">
         <CatalogRecommendations userId={userId} />{" "}
-        {/* Add the new recommendations component */}
       </div>
     </div>
   );

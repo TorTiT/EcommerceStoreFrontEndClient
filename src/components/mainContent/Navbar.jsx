@@ -31,31 +31,55 @@ const Navbar = () => {
     >
       <nav className="container mx-auto flex flex-wrap items-center justify-between">
         <div className="flex items-center space-x-4">
-          <SidebarButton /> {/* Add the SidebarButton component here */}
-          <Link to="/" className="hover:underline">
+          <SidebarButton />
+          <Link
+            to="/"
+            className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
+          >
             Home
           </Link>
-          <Link to="/cart" className="hover:underline">
+          <Link
+            to="/cart"
+            className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
+          >
             Cart Page
           </Link>
-          <Link to="/catalog" className="hover:underline">
+          <Link
+            to="/catalog"
+            className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
+          >
             Products Catalog
           </Link>
           {user?.user?.role === "admin" && (
             <>
-              <Link to="/category" className="hover:underline">
+              <Link
+                to="/category"
+                className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
+              >
                 Categories Page
               </Link>
-              <Link to="/customers" className="hover:underline">
+              <Link
+                to="/customers"
+                className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
+              >
                 Customers Page
               </Link>
-              <Link to="/statistics" className="hover:underline">
+              <Link
+                to="/statistics"
+                className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
+              >
                 Statistics Page
               </Link>
-              <Link to="/adminproduct" className="hover:underline">
+              <Link
+                to="/adminproduct"
+                className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
+              >
                 Admin Products Catalog
               </Link>
-              <Link to="/deals" className="hover:underline">
+              <Link
+                to="/deals"
+                className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
+              >
                 Admin Deals Page
               </Link>
             </>
@@ -65,11 +89,14 @@ const Navbar = () => {
           <SearchBar />
           {user ? (
             <>
-              <span>Welcome, {user.userName}</span>
-              <LogoutButton /> {/* Add the LogoutButton component here */}
+              <span>Welcome, </span>
+              <LogoutButton />
             </>
           ) : (
-            <Link to="/login" className="hover:underline">
+            <Link
+              to="/login"
+              className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
+            >
               Login
             </Link>
           )}

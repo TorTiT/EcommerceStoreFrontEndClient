@@ -17,12 +17,12 @@ const ProductCard = ({ product, dealPrice }) => {
   };
 
   return (
-    <div className="relative rounded border bg-white p-4 shadow-lg">
-      <div className="relative">
+    <div className="relative flex h-96 flex-col rounded border bg-white p-4 shadow-lg">
+      <div className="relative h-48 flex-shrink-0">
         <img
           src={product.images[currentImageIndex]}
           alt={product.name}
-          className="h-48 w-full object-cover"
+          className="h-full w-full object-cover"
         />
         {product.images.length > 1 && (
           <>
@@ -41,16 +41,20 @@ const ProductCard = ({ product, dealPrice }) => {
           </>
         )}
       </div>
-      <h2 className="mt-2 text-xl font-bold">{product.name}</h2>
-      <p>{product.description}</p>
-      {dealPrice ? (
-        <div>
-          <p className="text-lg font-bold text-red-500">${dealPrice}</p>
-          <p className="text-sm line-through">${product.price}</p>
-        </div>
-      ) : (
-        <p className="text-lg font-bold">${product.price}</p>
-      )}
+      <div className="flex-grow overflow-hidden">
+        <h2 className="mt-2 truncate text-xl font-bold">{product.name}</h2>
+        <p className="truncate">{product.description}</p>
+      </div>
+      <div>
+        {dealPrice ? (
+          <div>
+            <p className="text-lg font-bold text-red-500">${dealPrice}</p>
+            <p className="text-sm line-through">${product.price}</p>
+          </div>
+        ) : (
+          <p className="text-lg font-bold">${product.price}</p>
+        )}
+      </div>
       <Link
         to={`/product/${product._id}`}
         className="mt-2 block rounded bg-blue-500 px-4 py-2 text-center text-white"

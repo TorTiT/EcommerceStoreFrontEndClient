@@ -1,0 +1,11 @@
+.recommendations .slick-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.recommendations .slick-slide > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

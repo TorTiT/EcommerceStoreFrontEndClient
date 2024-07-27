@@ -55,7 +55,7 @@ const CustomersPage = () => {
                             Qty
                           </th>
                           <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                            Date
+                            Added At
                           </th>
                         </tr>
                       </thead>
@@ -70,7 +70,7 @@ const CustomersPage = () => {
                                 {item.quantity}
                               </td>
                               <td className="whitespace-nowrap px-4 py-2 text-sm text-gray-500">
-                                {new Date(cart.created_at).toLocaleDateString()}
+                                {new Date(item.addedAt).toLocaleString()}
                               </td>
                             </tr>
                           )),

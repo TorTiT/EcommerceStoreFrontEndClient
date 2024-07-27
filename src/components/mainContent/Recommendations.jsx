@@ -10,6 +10,7 @@ import {
 import ProductCard from "../ProductCard";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "../../css/Recommendations.css";
 
 const Recommendations = ({ userId, triggerUpdate }) => {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const Recommendations = ({ userId, triggerUpdate }) => {
 
   const settings = {
     dots: true,
-    infinite: true,
+    infinite: recommendations.length > 1, // Disable infinite scroll if there's only one recommendation
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
@@ -35,7 +36,7 @@ const Recommendations = ({ userId, triggerUpdate }) => {
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
-          infinite: true,
+          infinite: recommendations.length > 1, // Disable infinite scroll for responsive settings too
           dots: true,
         },
       },
@@ -44,7 +45,7 @@ const Recommendations = ({ userId, triggerUpdate }) => {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          infinite: true,
+          infinite: recommendations.length > 1, // Disable infinite scroll for responsive settings too
           dots: true,
         },
       },
@@ -67,7 +68,10 @@ const Recommendations = ({ userId, triggerUpdate }) => {
       ) : (
         <Slider {...settings}>
           {recommendations.map((product) => (
-            <div key={product._id} className="p-2">
+            <div
+              key={product._id}
+              className="flex items-center justify-center p-2"
+            >
               <ProductCard product={product} showDescription={false} />
             </div>
           ))}

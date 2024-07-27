@@ -1,4 +1,10 @@
 import React from "react";
+import {
+  FaFacebook,
+  FaTwitter,
+  FaInstagram,
+  FaPinterest,
+} from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -35,28 +41,16 @@ const Footer = () => {
             <h5 className="text-lg font-semibold">Follow Us</h5>
             <div className="mt-2 flex justify-center space-x-4 sm:justify-end">
               <a href="https://www.facebook.com" className="hover:opacity-75">
-                <img
-                  src="facebook-icon.svg"
-                  alt="Facebook"
-                  className="h-6 w-6"
-                />
+                <FaFacebook className="h-6 w-6" />
               </a>
               <a href="https://www.twitter.com" className="hover:opacity-75">
-                <img src="twitter-icon.svg" alt="Twitter" className="h-6 w-6" />
+                <FaTwitter className="h-6 w-6" />
               </a>
               <a href="https://www.instagram.com" className="hover:opacity-75">
-                <img
-                  src="instagram-icon.svg"
-                  alt="Instagram"
-                  className="h-6 w-6"
-                />
+                <FaInstagram className="h-6 w-6" />
               </a>
               <a href="https://www.pinterest.com" className="hover:opacity-75">
-                <img
-                  src="pinterest-icon.svg"
-                  alt="Pinterest"
-                  className="h-6 w-6"
-                />
+                <FaPinterest className="h-6 w-6" />
               </a>
             </div>
           </div>

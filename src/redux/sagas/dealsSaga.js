@@ -12,7 +12,7 @@ import {
   removeDealFailure,
 } from "../slices/dealsSlice";
 
-const BASE_URL = "http://localhost:8000/deals";
+const BASE_URL = process.env.REACT_APP_API_URL + "/deals";
 
 function* fetchDeals() {
   try {

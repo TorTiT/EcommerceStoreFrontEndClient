@@ -15,7 +15,7 @@ import {
   deleteCartItemFailure,
 } from "../slices/cartSlice";
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 function* fetchCart(action) {
   try {
@@ -37,7 +37,7 @@ function* addItemToCartSaga(action) {
     );
     const response = yield call(
       axios.post,
-      `http://localhost:8000/cart/${action.payload.userId}/item`,
+      `${BASE_URL}/cart/${action.payload.userId}/item`,
       action.payload.itemDetails,
     );
     console.log(

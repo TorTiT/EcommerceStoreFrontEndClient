@@ -15,7 +15,7 @@ import {
   deleteCategoryFailure,
 } from "../slices/categorySlice";
 
-const BASE_URL = "http://localhost:8000/categories";
+const BASE_URL = process.env.REACT_APP_API_URL + "/categories";
 
 function* fetchAllCategoriesSaga() {
   try {

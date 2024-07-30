@@ -6,7 +6,7 @@ import {
   fetchCustomersFailure,
 } from "../slices/customersSlice";
 
-const BASE_URL = "http://localhost:8000/customers";
+const BASE_URL = process.env.REACT_APP_API_URL + "/customers";
 
 function* fetchCustomersSaga() {
   try {

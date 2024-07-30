@@ -9,7 +9,7 @@ import {
   fetchProductsInStockFailure,
 } from "../slices/statisticsSlice";
 
-const BASE_URL = "http://localhost:8000/statistics";
+const BASE_URL = process.env.REACT_APP_API_URL + "/statistics";
 
 function* fetchSoldProductsSaga() {
   try {

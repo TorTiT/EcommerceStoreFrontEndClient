@@ -9,17 +9,16 @@ import {
   registerFailure,
 } from "../actions/authActions";
 
+// Get the API URL from the environment variable
+const apiUrl = process.env.REACT_APP_API_URL;
+
 function* loginSaga(action) {
   try {
     console.log("Sending login request to server with:", action.payload);
-    const response = yield call(
-      axios.post,
-      "http://localhost:8000/users/login",
-      {
-        userName: action.payload.username,
-        password: action.payload.password,
-      },
-    );
+    const response = yield call(axios.post, `${apiUrl}/users/login`, {
+      userName: action.payload.username,
+      password: action.payload.password,
+    });
     console.log("Login request successful. Response:", response.data);
     yield put(loginSuccess(response.data));
   } catch (error) {
@@ -34,15 +33,11 @@ function* loginSaga(action) {
 function* registerSaga(action) {
   try {
     console.log("Sending register request to server with:", action.payload);
-    const response = yield call(
-      axios.post,
-      "http://localhost:8000/users/register",
-      {
-        userName: action.payload.username,
-        email: action.payload.email,
-        password: action.payload.password,
-      },
-    );
+    const response = yield call(axios.post, `${apiUrl}/users/register`, {
+      userName: action.payload.username,
+      email: action.payload.email,
+      password: action.payload.password,
+    });
     console.log("Register request successful. Response:", response.data);
     yield put(registerSuccess(response.data));
   } catch (error) {

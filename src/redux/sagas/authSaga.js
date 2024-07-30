@@ -10,7 +10,7 @@ import {
 } from "../actions/authActions";
 
 // Get the API URL from the environment variable
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 
 function* loginSaga(action) {
   try {

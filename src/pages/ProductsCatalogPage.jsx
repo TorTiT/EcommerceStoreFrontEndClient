@@ -13,6 +13,8 @@ import CatalogRecommendations from "../components/mainContent/CatalogRecommendat
 import { useTransition, animated } from "@react-spring/web";
 import { toast } from "react-toastify";
 import { useSearchParams } from "react-router-dom";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 
 const ProductsCatalogPage = () => {
   const dispatch = useDispatch();
@@ -35,8 +37,8 @@ const ProductsCatalogPage = () => {
   const initialCategory = searchParams.get("category") || "";
   const [filter, setFilter] = useState({
     title: "",
-    category: initialCategory,
-    price: "",
+    categories: new Set(initialCategory ? [initialCategory] : []),
+    price: [0, 1000],
   });
 
   useEffect(() => {
@@ -56,14 +58,30 @@ const ProductsCatalogPage = () => {
     if (categoryFromParams) {
       setFilter((prevFilter) => ({
         ...prevFilter,
-        category: categoryFromParams,
+        categories: new Set([categoryFromParams]),
       }));
     }
   }, [searchParams]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilter((prevFilter) => ({ ...prevFilter, [name]: value }));
+    if (name === "category") {
+      setFilter((prevFilter) => {
+        const newCategories = new Set(prevFilter.categories);
+        if (newCategories.has(value)) {
+          newCategories.delete(value);
+        } else {
+          newCategories.add(value);
+        }
+        return { ...prevFilter, categories: newCategories };
+      });
+    } else {
+      setFilter((prevFilter) => ({ ...prevFilter, [name]: value }));
+    }
+  };
+
+  const handlePriceChange = (price) => {
+    setFilter((prevFilter) => ({ ...prevFilter, price }));
   };
 
   const handlePurchase = (product) => {
@@ -94,6 +112,28 @@ const ProductsCatalogPage = () => {
     }
   };
 
+  const renderCategoryTree = (categories) => {
+    return (
+      <ul className="pl-4">
+        {categories.map((category) => (
+          <li key={category._id}>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="category"
+                value={category._id}
+                checked={filter.categories.has(category._id)}
+                onChange={handleFilterChange}
+                className="mr-2"
+              />
+              {category.name}
+            </label>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   const filteredProducts = products
     .map((product) => {
       const deal = deals.find((deal) => deal.product._id === product._id);
@@ -104,8 +144,10 @@ const ProductsCatalogPage = () => {
     .filter((product) => {
       return (
         product.name.toLowerCase().includes(filter.title.toLowerCase()) &&
-        (filter.category === "" || product.category === filter.category) &&
-        (filter.price === "" || product.price <= parseFloat(filter.price))
+        (filter.categories.size === 0 ||
+          filter.categories.has(product.category)) &&
+        product.price >= filter.price[0] &&
+        product.price <= filter.price[1]
       );
     });
 
@@ -118,41 +160,45 @@ const ProductsCatalogPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
-      <div className="container mx-auto flex flex-col-reverse p-4 lg:flex-row">
-        <div className="lg:w-3/4">
-          <h3 className="mb-6 text-3xl font-bold text-blue-600">
-            Products Catalog
-          </h3>
-          <div className="mb-6 flex flex-col items-center md:flex-row">
+      <div className="container mx-auto flex flex-col p-4 lg:flex-row">
+        <div className="mb-6 lg:mb-0 lg:mr-4 lg:w-1/4">
+          <h3 className="mb-4 text-2xl font-bold text-blue-600">Filters</h3>
+          <div className="flex flex-col space-y-4">
             <input
-              className="mb-2 w-full rounded-md border border-blue-300 p-2 md:mb-0 md:mr-2 md:w-1/3"
+              className="w-full rounded-md border border-blue-300 p-2"
               name="title"
               placeholder="Search by title"
               value={filter.title}
               onChange={handleFilterChange}
             />
-            <select
-              className="mb-2 w-full rounded-md border border-blue-300 p-2 md:mb-0 md:mr-2 md:w-1/3"
-              name="category"
-              value={filter.category}
-              onChange={handleFilterChange}
-            >
-              <option value="">All Categories</option>
-              {categories.map((category) => (
-                <option key={category._id} value={category._id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-            <input
-              type="number"
-              className="mb-2 w-1/4 rounded-md border border-blue-300 p-2 md:mb-0"
-              name="price"
-              placeholder="Max price"
-              value={filter.price}
-              onChange={handleFilterChange}
-            />
+            <div>
+              <h4 className="mb-2 font-semibold">Categories</h4>
+              {renderCategoryTree(categories)}
+            </div>
+            <div className="w-full">
+              <p className="mb-2 text-center text-sm font-semibold text-gray-700">
+                Price Range
+              </p>
+              <Slider
+                range
+                min={0}
+                max={1000}
+                defaultValue={[0, 1000]}
+                value={filter.price}
+                onChange={handlePriceChange}
+                className="mx-2"
+              />
+              <div className="flex justify-between text-xs text-gray-600">
+                <span>${filter.price[0]}</span>
+                <span>${filter.price[1]}</span>
+              </div>
+            </div>
           </div>
+        </div>
+        <div className="lg:w-3/4">
+          <h3 className="mb-6 text-3xl font-bold text-blue-600">
+            Products Catalog
+          </h3>
           {productsStatus === "loading" ? (
             <p className="text-yellow-600">Loading...</p>
           ) : productsStatus === "failed" ? (
@@ -178,7 +224,7 @@ const ProductsCatalogPage = () => {
         </div>
       </div>
       <div className="container mx-auto pt-6">
-        <CatalogRecommendations userId={userId} />{" "}
+        <CatalogRecommendations userId={userId} />
       </div>
     </div>
   );

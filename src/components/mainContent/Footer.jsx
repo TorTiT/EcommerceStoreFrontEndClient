@@ -9,17 +9,17 @@ import {
 const Footer = () => {
   return (
     <footer className="bg-gray-800 py-4 text-white">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-wrap items-center justify-between">
-          <div className="mb-4 w-full text-center sm:mb-0 sm:w-1/3 sm:text-left">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="flex flex-wrap items-center justify-between space-y-4 sm:space-y-0">
+          <div className="w-full text-center sm:w-1/3 sm:text-left">
             <h5 className="text-lg font-semibold">Contact Us</h5>
             <p className="mt-2">123 Shoe Lane, Sneaker City, SC 12345</p>
             <p>Email: info@shoestore.com</p>
             <p>Phone: (123) 456-7890</p>
           </div>
-          <div className="mb-4 w-full text-center sm:mb-0 sm:w-1/3">
+          <div className="w-full text-center sm:w-1/3">
             <h5 className="text-lg font-semibold">Quick Links</h5>
-            <ul className="mt-2">
+            <ul className="mt-2 space-y-2">
               <li>
                 <a href="/about" className="hover:underline">
                   About Us

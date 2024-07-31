@@ -9,7 +9,7 @@ import {
   fetchProductsInStockFailure,
 } from "../slices/statisticsSlice";
 
-const BASE_URL = import.meta.env.VITE_API_URL + "/statistics";
+const BASE_URL = "http://localhost:8000/statistics";
 
 function* fetchSoldProductsSaga() {
   try {

@@ -45,8 +45,8 @@ const App = () => {
       <div className="flex min-h-screen flex-col">
         <CartComponent />
         <Navbar />
-        <div className="flex flex-grow">
-          <div className="flex-grow p-4">
+        <div className="flex-grow">
+          <div className="mx-auto max-w-7xl p-4">
             <Routes>
               <Route path="/" element={<MainContent />} />
               <Route path="category" element={<CategoriesPage />} />

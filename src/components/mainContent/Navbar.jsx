@@ -14,94 +14,62 @@ const Navbar = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 20,
-      },
+      transition: { type: "spring", stiffness: 100, damping: 20 },
     },
   };
 
   return (
     <motion.div
-      className="bg-gray-800 p-4 text-white"
+      className="w-full bg-gray-800 p-4 text-white"
       initial="hidden"
       animate="visible"
       variants={navbarVariants}
     >
-      <nav className="container mx-auto flex flex-wrap items-center justify-between">
-        <div className="flex items-center space-x-4">
+      <nav className="mx-auto flex max-w-7xl flex-col items-center justify-between md:flex-row">
+        <div className="flex flex-wrap items-center justify-center space-x-4">
           <SidebarButton />
-          <Link
-            to="/"
-            className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
-          >
+          <Link to="/" className="hover:underline">
             Home
           </Link>
-          <Link
-            to="/cart"
-            className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
-          >
+          <Link to="/cart" className="hover:underline">
             Cart Page
           </Link>
-          <Link
-            to="/catalog"
-            className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
-          >
+          <Link to="/catalog" className="hover:underline">
             Products Catalog
           </Link>
           {user?.user?.role === "admin" && (
             <>
-              <Link
-                to="/category"
-                className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
-              >
+              <Link to="/category" className="hover:underline">
                 Categories Page
               </Link>
-              <Link
-                to="/customers"
-                className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
-              >
+              <Link to="/customers" className="hover:underline">
                 Customers Page
               </Link>
-              <Link
-                to="/statistics"
-                className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
-              >
+              <Link to="/statistics" className="hover:underline">
                 Statistics Page
               </Link>
-              <Link
-                to="/adminproduct"
-                className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
-              >
+              <Link to="/adminproduct" className="hover:underline">
                 Admin Products Catalog
               </Link>
-              <Link
-                to="/deals"
-                className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
-              >
+              <Link to="/deals" className="hover:underline">
                 Admin Deals Page
               </Link>
             </>
           )}
         </div>
-        <div className="ml-auto flex items-center space-x-4">
-          <SearchBar />
+        <div className="mt-2 flex items-center space-x-4 md:mt-0">
           {user ? (
-            <>
-              <span>Welcome, </span>
-              <LogoutButton />
-            </>
+            <LogoutButton />
           ) : (
-            <Link
-              to="/login"
-              className="transition duration-300 ease-in-out hover:text-gray-400 hover:underline"
-            >
+            <Link to="/login" className="hover:underline">
               Login
             </Link>
           )}
         </div>
       </nav>
+      <div className="mt-2 flex justify-center">
+        <SearchBar />
+      </div>
     </motion.div>
   );
 };

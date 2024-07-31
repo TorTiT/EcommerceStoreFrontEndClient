@@ -15,7 +15,7 @@ import {
   deleteCartItemFailure,
 } from "../slices/cartSlice";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = "http://localhost:8000";
 
 function* fetchCart(action) {
   try {
@@ -37,7 +37,7 @@ function* addItemToCartSaga(action) {
     );
     const response = yield call(
       axios.post,
-      `${BASE_URL}/cart/${action.payload.userId}/item`,
+      `http://localhost:8000/cart/${action.payload.userId}/item`,
       action.payload.itemDetails,
     );
     console.log(

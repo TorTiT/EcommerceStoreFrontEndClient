@@ -1,3 +1,5 @@
+// src/redux/sagas/productsSagas.js
+
 import { call, put, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import {
@@ -21,7 +23,7 @@ import {
   uploadMultipleProductsFailure,
 } from "../slices/productsSlice";
 
-const BASE_URL = import.meta.env.VITE_API_URL + "/products";
+const BASE_URL = "http://localhost:8000/products";
 
 function* fetchAllProductsSaga() {
   try {

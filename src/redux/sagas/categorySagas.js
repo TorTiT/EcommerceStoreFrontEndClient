@@ -15,7 +15,7 @@ import {
   deleteCategoryFailure,
 } from "../slices/categorySlice";
 
-const BASE_URL = import.meta.env.VITE_API_URL + "/categories";
+const BASE_URL = "http://localhost:8000/categories";
 
 function* fetchAllCategoriesSaga() {
   try {

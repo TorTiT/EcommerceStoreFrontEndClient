@@ -12,7 +12,7 @@ import {
   removeDealFailure,
 } from "../slices/dealsSlice";
 
-const BASE_URL = import.meta.env.VITE_API_URL + "/deals";
+const BASE_URL = "http://localhost:8000/deals";
 
 function* fetchDeals() {
   try {
